@@ -1,0 +1,11 @@
+pixel_to_km: 2.3109 # DO NOT CHANGE!!!
+num_households: 5
+num_generations: 500
+
+households:
+  num_workers: 5
+  grain: 3000
+  generation_countdown: 15
+  knowledge_ratio: 5.77725   # 2.5 km  per individual (half an hour walk)
+  min_competency: 0.2
+  min_ambition: 0.2
