@@ -13,14 +13,15 @@ class Presenter:
         self.ui = UserInterface(self)
         self.ui.start()
 
-
     def statistics(self):
         df = pd.DataFrame(columns=self.columns)
         for household in self.households:
             row = household.statistics()
             df = df.append(row, ignore_index=True)
-        print(df)
         return df
 
-    def map(self):
-        return self.environment.map
+    def river_map(self):
+        return self.environment.river_map
+
+    def flood_map(self):
+        return self.environment.flood_map

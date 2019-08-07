@@ -17,5 +17,4 @@ class AbstractModel(ABC):
     def generate_position(self, environment):
         rows, columns = environment.shape
         x, y = random.randint(0, columns), random.randint(0, rows)
-        # TODO: an implicit assumption is being made here.
         return (x, y)

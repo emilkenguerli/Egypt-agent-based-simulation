@@ -10,11 +10,8 @@ from model.agent_model import AgentModel
 
 
 def setup_map(map_file):
-    img = mpimg.imread(map_file)
-    shape = img.shape
-    ones = np.ones(shape)
-    map = ones - img
-    print(shape)
+    map = mpimg.imread(map_file)
+    shape = map.shape
     return map, shape
 
 
@@ -58,10 +55,11 @@ def run_simulation(presenter):
 
 
 if __name__ == "__main__":
-    map, shape = setup_map('../../resources/nile_river.png')
-    env = Environment(map, shape)
+    river_map, shape = setup_map('../../resources/river_map.png')
+    flood_map, shape = setup_map('../../resources/flood_map.png')
     config = load_config('../config.yml')
-    households = setup_households(env, config)
     num_generations = config['num_generations']
+    env = Environment(river_map, flood_map, shape)
+    households = setup_households(env, config)
     presenter = Presenter(env, households, num_generations)
     run_simulation(presenter) # Should probably pass presenter to run_simulation
