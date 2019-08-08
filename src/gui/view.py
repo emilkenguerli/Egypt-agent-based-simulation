@@ -9,6 +9,9 @@ import numpy as np
 
 
 class UserInterface(Thread):
+    """ """
+
+
     def __init__(self, presenter):
         Thread.__init__(self)
         self.__WHITE = (255, 255, 255)
@@ -40,6 +43,7 @@ class UserInterface(Thread):
         knowledge_ratio = statistics['knowledge_ratio']
         competency = statistics['competency']
         ambition = statistics['ambition']
+
         knowledge_radii = knowledge_ratio*num_workers
         area = math.pi*(knowledge_radii**2)
 

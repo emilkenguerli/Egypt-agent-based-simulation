@@ -11,4 +11,9 @@ class AgentModel(AbstractModel):
         return super().generate_ambition(min_ambition)
 
     def generate_position(self, environment):
-        return super().generate_position(environment)
+        x, y = super().generate_position(environment)
+        river_map = environment.river_map
+        while river_map[y, x]:
+            # Assumes river pixels have a value of 1.
+            x, y = super().generate_position(environment)
+        return (x, y)

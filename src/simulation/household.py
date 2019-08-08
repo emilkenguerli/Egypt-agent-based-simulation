@@ -51,5 +51,8 @@ class Household:
     def storage_loss(self, environment):
         pass
 
+    def relocate(self, environment):
+        pass
+
     def get_grain(self):
         return self.__grain

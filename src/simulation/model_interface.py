@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import random
 
+# TODO: the model should have a memory of all previous decisions.
+
 class AbstractModel(ABC):
     def __init__(self):
         pass
@@ -15,6 +17,14 @@ class AbstractModel(ABC):
 
     @abstractmethod
     def generate_position(self, environment):
-        rows, columns = environment.shape
-        x, y = random.randint(0, columns), random.randint(0, rows)
+        nrows, ncols = environment.shape
+        x, y = random.randint(0, ncols-1), random.randint(0, nrows-1)
         return (x, y)
+
+    @abstractmethod
+    def choose_fields(self, environment):
+        pass
+
+    @abstractmethod
+    def relocate(self, environment):
+        pass
