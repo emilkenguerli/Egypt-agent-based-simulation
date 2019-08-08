@@ -23,5 +23,5 @@ class Presenter:
     def river_map(self):
         return self.environment.river_map
 
-    def flood_map(self):
-        return self.environment.flood_map
+    def fertility_map(self):
+        return self.environment.fertility_map

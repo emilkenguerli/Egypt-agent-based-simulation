@@ -46,7 +46,6 @@ def run_simulation(presenter):
     while presenter.num_generations > 0:
         if not households:
             break
-        env.flood()
         households.sort(key=lambda x: x.get_grain(), reverse=True)
         for house in households:
             house.claim_fields(env)
@@ -56,10 +55,10 @@ def run_simulation(presenter):
 
 if __name__ == "__main__":
     river_map, shape = setup_map('../../resources/river_map.png')
-    flood_map, shape = setup_map('../../resources/flood_map.png')
+    fertility_map, shape = setup_map('../../resources/fertility_map.png')
     config = load_config('../config.yml')
     num_generations = config['num_generations']
-    env = Environment(river_map, flood_map, shape)
+    env = Environment(river_map, fertility_map, shape)
     households = setup_households(env, config)
     presenter = Presenter(env, households, num_generations)
     run_simulation(presenter) # Should probably pass presenter to run_simulation
