@@ -1,6 +1,9 @@
 import math
-from threading import Thread
 
+import cv2
+from matplotlib.animation import FuncAnimation
+from matplotlib.animation import ArtistAnimation
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 import matplotlib.cm as mcm
 import matplotlib.colors as mcolors
 import matplotlib.image as mpimg
@@ -8,20 +11,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-class UserInterface(Thread):
-    """ """
-
+class View():
 
     def __init__(self, presenter):
-        Thread.__init__(self)
+        self.__FRAME_PATH = '../../resources/frames/'
         self.__WHITE = (255, 255, 255)
         self.__BLACK = (0, 0, 0)
         self.__BLUE = (102, 178, 255)
         self.__GREEN = (0, 255, 0)
         self.presenter = presenter
+        self.frame_count = 0
 
-
-    def run(self):
+    def update_frames(self):
         statistics = self.presenter.statistics()
         river_map = self.presenter.river_map()
         fertility_map = self.presenter.fertility_map()
@@ -29,24 +30,35 @@ class UserInterface(Thread):
         fertility_img = self.fertility_img(fertility_map)
         display = fertility_img + river_img
 
-        plt.figure(num='Egypt Simulator')
-        self.plot_households()
+        fig = plt.figure()
+        x_pos, y_pos = self.get_pos(statistics)
+        area = self.get_area(statistics)
+        rgba = self.get_rgba(statistics)
+        plt.scatter(x_pos, y_pos, s=area, color=rgba)
         plt.imshow(display)
-        plt.show()
+        path = self.__FRAME_PATH + 'frame_{0}'.format(self.frame_count)
+        plt.savefig(path)
+        self.frame_count += 1
+        plt.close('all')
 
 
-    def plot_households(self):
-        statistics = self.presenter.statistics()
+    def get_pos(self, statistics):
         x_pos, y_pos = statistics['x_pos'], statistics['y_pos']
+        return (x_pos, y_pos)
+
+
+    def get_area(self, statistics):
+        num_workers = statistics['num_workers']
+        knowledge_ratio = statistics['knowledge_ratio']
+        knowledge_radii = knowledge_ratio*num_workers
+        return math.pi*(knowledge_radii**2)
+
+
+    def get_rgba(self, statistics):
         num_workers = statistics['num_workers']
         grain = statistics['grain']
-        knowledge_ratio = statistics['knowledge_ratio']
         competency = statistics['competency']
         ambition = statistics['ambition']
-
-        knowledge_radii = knowledge_ratio*num_workers
-        area = math.pi*(knowledge_radii**2)
-
         cnorm = mcolors.Normalize(vmin=0, vmax=1)
         scalar_map = mcm.ScalarMappable(norm=cnorm, cmap=plt.get_cmap('plasma'))
         competency_to_ambition = ambition/(ambition+competency)
@@ -56,8 +68,7 @@ class UserInterface(Thread):
         gpw_min, gpw_max = grain_per_worker.min(), grain_per_worker.max()
         alpha = np.interp(grain_per_worker, (gpw_min, gpw_max), (0.2, 0.8))
         rgba[:,-1] = alpha
-
-        plt.scatter(x_pos, y_pos, s=area, color=rgba)
+        return rgba
 
 
     def river_img(self, river_map):

@@ -1,3 +1,5 @@
+import logging
+
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -50,15 +52,21 @@ def run_simulation(presenter):
         for house in households:
             house.claim_fields(env)
             house.farm(env)
+            house.relocate(env)
+        presenter.update()
         presenter.num_generations -= 1
+    presenter.finish()
 
 
 if __name__ == "__main__":
-    river_map, shape = setup_map('../../resources/river_map.png')
-    fertility_map, shape = setup_map('../../resources/fertility_map.png')
+    logger = logging.getLogger()
+    logger.setLevel(100)
+
+    river_map, shape = setup_map('../../resources/maps/river_map.png')
+    fertility_map, shape = setup_map('../../resources/maps/fertility_map.png')
     config = load_config('../config.yml')
     num_generations = config['num_generations']
     env = Environment(river_map, fertility_map, shape)
     households = setup_households(env, config)
     presenter = Presenter(env, households, num_generations)
-    run_simulation(presenter) # Should probably pass presenter to run_simulation
+    run_simulation(presenter)

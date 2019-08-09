@@ -52,7 +52,8 @@ class Household:
         pass
 
     def relocate(self, environment):
-        pass
+        x, y = self.__model.relocate(self, environment)
+        self.__position = (x, y)
 
     def get_grain(self):
         return self.__grain

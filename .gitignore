@@ -1,2 +1,7 @@
 *.db
 *.pyc
+*.jpg
+*.mp4
+*.avi
+
+resources/frames/*  

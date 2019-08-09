@@ -1,5 +1,7 @@
 from simulation.model_interface import AbstractModel
 
+# all decisions controlled by this class.
+
 class AgentModel(AbstractModel):
     def __init__(self):
         pass
@@ -17,3 +19,9 @@ class AgentModel(AbstractModel):
             # Assumes river pixels have a value of 1.
             x, y = super().generate_position(environment)
         return (x, y)
+
+    def choose_fields(self, environment):
+        pass
+
+    def relocate(self, household, environment):
+        return super().relocate(household, environment)

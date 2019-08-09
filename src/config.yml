@@ -1,6 +1,6 @@
 pixel_to_km: 2.3109 # DO NOT CHANGE!!!
 num_households: 15
-num_generations: 500
+num_generations: 10
 
 households:
   num_workers: 5

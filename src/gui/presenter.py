@@ -1,5 +1,5 @@
 import pandas as pd
-from gui.view import UserInterface
+from gui.view import View
 
 class Presenter:
     """ """
@@ -10,8 +10,7 @@ class Presenter:
         self.columns = households[0].columns
         # Assumes 'columns' attribute is the same for all households.
         self.num_generations = num_generations
-        self.ui = UserInterface(self)
-        self.ui.start()
+        self.view = View(self)
 
     def statistics(self):
         df = pd.DataFrame(columns=self.columns)
@@ -20,8 +19,15 @@ class Presenter:
             df = df.append(row, ignore_index=True)
         return df
 
+    def update(self):
+        self.view.update_frames()
+
     def river_map(self):
         return self.environment.river_map
 
     def fertility_map(self):
         return self.environment.fertility_map
+
+    def finish(self):
+        pass
+        # self.view.mp4()
