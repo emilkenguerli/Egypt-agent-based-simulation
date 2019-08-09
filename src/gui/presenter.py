@@ -20,14 +20,10 @@ class Presenter:
         return df
 
     def update(self):
-        self.view.update_frames()
+        self.view.save_frame()
 
     def river_map(self):
         return self.environment.river_map
 
     def fertility_map(self):
         return self.environment.fertility_map
-
-    def finish(self):
-        pass
-        # self.view.mp4()

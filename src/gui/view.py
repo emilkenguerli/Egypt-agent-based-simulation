@@ -22,7 +22,7 @@ class View():
         self.presenter = presenter
         self.frame_count = 0
 
-    def update_frames(self):
+    def save_frame(self):
         statistics = self.presenter.statistics()
         river_map = self.presenter.river_map()
         fertility_map = self.presenter.fertility_map()
@@ -40,19 +40,18 @@ class View():
         plt.savefig(path)
         self.frame_count += 1
         plt.close('all')
-
+        # TODO: It may be worth exploring updating the current figure instead
+        # of replotting for every frame.
 
     def get_pos(self, statistics):
         x_pos, y_pos = statistics['x_pos'], statistics['y_pos']
         return (x_pos, y_pos)
-
 
     def get_area(self, statistics):
         num_workers = statistics['num_workers']
         knowledge_ratio = statistics['knowledge_ratio']
         knowledge_radii = knowledge_ratio*num_workers
         return math.pi*(knowledge_radii**2)
-
 
     def get_rgba(self, statistics):
         num_workers = statistics['num_workers']
@@ -70,14 +69,12 @@ class View():
         rgba[:,-1] = alpha
         return rgba
 
-
     def river_img(self, river_map):
         river_list = list(river_map)
         make_blue = lambda px: self.__BLUE if px == 1.0 else self.__BLACK
         # Assumes river pixels in river map have a value of 1.0.
         river_list = [list(map(make_blue, row)) for row in river_list]
         return np.array(river_list)
-
 
     def fertility_img(self, fertility_map):
         invert = np.ones(fertility_map.shape) - fertility_map
