@@ -11,9 +11,9 @@ class AbstractModel(ABC):
     ABC -- the abstract base class
 
     Each model instance serves as the decision-making core of a particular
-    household. It contains the memory of previous generations and past
-    decisions. Each method represents a possible decision, thus giving the
-    household its autonomy.
+    household. It contains the memory of previous generations and past decisions.
+    Each method represents a possible decision, thus giving the household its
+    autonomy.
 
     Implementation of abstract methods is unsophistacated. A derived class
     can either override or extend the functionality provided by this class.
@@ -49,8 +49,8 @@ class AbstractModel(ABC):
     def relocate(self, household, environment):
         """Return relocation position tuple.
 
-        Relocation position is within the household's knowledge_radius.
-        The new position can't stray beyond the borders of the environment.
+        Relocation position is within the household's knowledge_radius. The new
+        position can't stray beyond the borders of the environment.
         """
         statistics = household.statistics()
         nrow, ncol = environment.shape

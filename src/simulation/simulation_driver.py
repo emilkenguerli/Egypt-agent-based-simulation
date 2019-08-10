@@ -78,7 +78,6 @@ if __name__ == "__main__":
     river_map, shape = setup_map('../../resources/maps/river_map.png')
     fertility_map, shape = setup_map('../../resources/maps/fertility_map.png')
     config = load_config('../config.yml')
-    print(type(config))
     num_generations = config['num_generations']
     env = Environment(river_map, fertility_map, shape)
     households = setup_households(env, config)

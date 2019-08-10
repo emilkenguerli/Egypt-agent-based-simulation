@@ -1,6 +1,5 @@
 import math
 
-import cv2
 from matplotlib.animation import FuncAnimation
 from matplotlib.animation import ArtistAnimation
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -12,8 +11,18 @@ import numpy as np
 
 
 class View():
+    """Act upon data from the presenter and save data in the relevant format."""
 
     def __init__(self, presenter):
+        """Initialise view attributes upon object instantiation.
+
+        Keyword arguments:
+        presenter           -- presenter object for data retrieval
+
+        The presenter has the view as an attribute and the view has the presenter
+        as an attribute. This is to facilitate the flow of information between
+        these two layers.
+        """
         self.__FRAME_PATH = '../../resources/frames/'
         self.__WHITE = (255, 255, 255)
         self.__BLACK = (0, 0, 0)
@@ -23,6 +32,11 @@ class View():
         self.frame_count = 0
 
     def save_frame(self):
+        """Save household and landscape information as a frame.
+
+        The relevant information is plotted as a matplotlib figure which is then
+        saved as a .png file under the resources/frames folder.
+        """
         statistics = self.presenter.statistics()
         river_map = self.presenter.river_map()
         fertility_map = self.presenter.fertility_map()
@@ -36,7 +50,7 @@ class View():
         rgba = self.get_rgba(statistics)
         plt.scatter(x_pos, y_pos, s=area, color=rgba)
         plt.imshow(display)
-        path = self.__FRAME_PATH + 'frame_{0}'.format(self.frame_count)
+        path = self.__FRAME_PATH + 'gen_{0}'.format(self.frame_count)
         plt.savefig(path)
         self.frame_count += 1
         plt.close('all')
@@ -44,16 +58,23 @@ class View():
         # of replotting for every frame.
 
     def get_pos(self, statistics):
+        """Return position tuple from household statistics."""
         x_pos, y_pos = statistics['x_pos'], statistics['y_pos']
         return (x_pos, y_pos)
 
     def get_area(self, statistics):
+        """Return area of the marker to be plotted on the scatter figure."""
         num_workers = statistics['num_workers']
         knowledge_ratio = statistics['knowledge_ratio']
         knowledge_radii = knowledge_ratio*num_workers
         return math.pi*(knowledge_radii**2)
 
     def get_rgba(self, statistics):
+        """Return numpy array rgba pixels values for all the household.
+
+        Color (rgb channel)         -- determined by propensity to ambition or competency
+        Opaqueness (alpha channel)  -- determined by grain per worker
+        """
         num_workers = statistics['num_workers']
         grain = statistics['grain']
         competency = statistics['competency']
@@ -70,6 +91,11 @@ class View():
         return rgba
 
     def river_img(self, river_map):
+        """Convert river_map into river_img and return as numpy array.
+
+        Changing grayscale format to rgb format. River pixels will be mapped to
+        blue otherwise black.
+        """
         river_list = list(river_map)
         make_blue = lambda px: self.__BLUE if px == 1.0 else self.__BLACK
         # Assumes river pixels in river map have a value of 1.0.
@@ -77,6 +103,11 @@ class View():
         return np.array(river_list)
 
     def fertility_img(self, fertility_map):
+        """Convert fertility_map into fertility_img and return as numpy array.
+
+        Changing grayscale format to rgb format. Fertility pixels will be mapped
+        to a shade of green otherwise white.
+        """
         invert = np.ones(fertility_map.shape) - fertility_map
         colour_invert = 255*invert
         fertility_list = list(colour_invert)

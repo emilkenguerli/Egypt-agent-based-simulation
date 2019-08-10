@@ -5,9 +5,10 @@ import pandas as pd
 
 
 class Household:
-    """Represent communities or households (autonomous agents) in the neolithic era of ancient Egypt"
+    """Represent communities or households in the neolithic era of ancient Egypt"
 
-    This class encompasses all actions, interactions and attributes of an agent in the ABMS (Agent-based Model Simulation).
+    This class encompasses all actions, interactions and attributes of an
+    autonomous agent in the ABMS (Agent-based Model Simulation).
     """
 
     def __init__(self, model, id, num_workers, grain, generation_countdown, knowledge_ratio, min_competency, min_ambition, env):
@@ -22,9 +23,10 @@ class Household:
         knowledge_ratio      -- knowledge_radius per household specified in pixels
         min_competency       -- generated competency between min_competency and 1
         min_ambition         -- generated ambition between min_ambition and 1
-        env                  -- used to determine starting position
+        env                  -- used to determine the household's starting position
 
-        Set of attributes defines the state of the household at a specific point in time (generation).
+        Set of attributes defines the state of the household at a specific point in
+        time (generation).
         """
         self.__model = model
         self.__id = id
