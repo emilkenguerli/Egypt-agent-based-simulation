@@ -35,7 +35,6 @@ class AgentModel(AbstractModel):
         x, y = super().generate_position(environment)
         river_map = environment.river_map
         while river_map[y, x]:
-            # Assumes river pixels have a value of 1.
             x, y = super().generate_position(environment)
         return (x, y)
 
@@ -43,6 +42,11 @@ class AgentModel(AbstractModel):
         """Not implemented."""
         pass
 
-    def relocate(self, household, environment):
+    def relocate(self, num_workers, knowledge_ratio, current_position, environment):
         """Extend superclass method."""
-        return super().relocate(household, environment)
+        river_map = environment.river_map
+        x, y = super().relocate(num_workers, knowledge_ratio, current_position, environment)
+        if not river_map[y, x]:
+            return (x, y)
+        else:
+            return current_position

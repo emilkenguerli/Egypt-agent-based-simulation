@@ -78,7 +78,7 @@ class Household:
 
     def relocate(self, environment):
         """Assign new position to household."""
-        x, y = self.__model.relocate(self, environment)
+        x, y = self.__model.relocate(self.__num_workers, self.__knowledge_ratio, self.__position, environment)
         self.__position = (x, y)
 
     def get_grain(self):

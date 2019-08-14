@@ -46,17 +46,14 @@ class AbstractModel(ABC):
         pass
 
     @abstractmethod
-    def relocate(self, household, environment):
+    def relocate(self, num_workers, knowledge_ratio, current_position, environment):
         """Return relocation position tuple.
 
         Relocation position is within the household's knowledge_radius. The new
         position can't stray beyond the borders of the environment.
         """
-        statistics = household.statistics()
         nrow, ncol = environment.shape
-        num_workers = statistics['num_workers']
-        knowledge_ratio = statistics['knowledge_ratio']
-        x_pos, y_pos = statistics['x_pos'], statistics['y_pos']
+        x_pos, y_pos = current_position
         knowledge_radius = num_workers*knowledge_ratio
         new_x = x_pos + int(random.uniform(-knowledge_radius, knowledge_radius))
         new_y = y_pos + int(random.uniform(-knowledge_radius, knowledge_radius))

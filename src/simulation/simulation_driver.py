@@ -13,7 +13,7 @@ from model.agent_model import AgentModel
 
 def setup_map(map_file):
     """Read and return a numpy array along with its shape.
-
+    
     Keyword arguments:
     map_file -- path to map image
     """
