@@ -38,11 +38,11 @@ class AgentModel(AbstractModel):
             x, y = super().generate_position(environment)
         return (x, y)
 
-    def choose_fields(self, environment):
+    def choose_claim_fields(self, knowledge_ratio, num_workers, current_position, environment):
         """Not implemented."""
-        pass
+        return super().choose_claim_fields(num_workers, knowledge_ratio, current_position, environment)
 
-    def relocate(self, num_workers, knowledge_ratio, current_position, environment):
+    def relocate(self, knowledge_ratio, num_workers, current_position, environment):
         """Extend superclass method."""
         river_map = environment.river_map
         x, y = super().relocate(num_workers, knowledge_ratio, current_position, environment)

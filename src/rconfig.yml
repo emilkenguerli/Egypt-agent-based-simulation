@@ -1,0 +1,3 @@
+pixel_to_km: 2.3109 # DO NOT CHANGE!!!
+knowledge_ratio: 1.15545   # 0.5 km  per individual (~population density)
+claim_ratio: 4

@@ -23,11 +23,11 @@ class View():
         as an attribute. This is to facilitate the flow of information between
         these two layers.
         """
-        self.__FRAME_PATH = '../../resources/frames/'
-        self.__WHITE = (255, 255, 255)
-        self.__BLACK = (0, 0, 0)
-        self.__BLUE = (102, 178, 255)
-        self.__GREEN = (0, 255, 0)
+        self._FRAME_PATH = '../../resources/frames/'
+        self._WHITE = (255, 255, 255)
+        self._BLACK = (0, 0, 0)
+        self._BLUE = (102, 178, 255)
+        self._GREEN = (0, 255, 0)
         self.presenter = presenter
         self.frame_count = 0
 
@@ -50,7 +50,7 @@ class View():
         rgba = self.get_rgba(statistics)
         plt.scatter(x_pos, y_pos, s=area, color=rgba)
         plt.imshow(display)
-        path = self.__FRAME_PATH + 'gen_{0}'.format(self.frame_count)
+        path = self._FRAME_PATH + 'gen_{0}'.format(self.frame_count)
         plt.savefig(path)
         self.frame_count += 1
         plt.close('all')
@@ -65,9 +65,8 @@ class View():
     def get_area(self, statistics):
         """Return area of the marker to be plotted on the scatter figure."""
         num_workers = statistics['num_workers']
-        knowledge_ratio = statistics['knowledge_ratio']
-        knowledge_radii = knowledge_ratio*num_workers
-        return math.pi*(knowledge_radii**2)
+        knowledge_radius = statistics['knowledge_radius']
+        return math.pi*(knowledge_radius**2)
 
     def get_rgba(self, statistics):
         """Return numpy array rgba pixels values for all the household.
@@ -97,7 +96,7 @@ class View():
         blue otherwise black.
         """
         river_list = list(river_map)
-        make_blue = lambda px: self.__BLUE if px == 1.0 else self.__BLACK
+        make_blue = lambda px: self._BLUE if px == 1.0 else self._BLACK
         # Assumes river pixels in river map have a value of 1.0.
         river_list = [list(map(make_blue, row)) for row in river_list]
         return np.array(river_list)
@@ -111,8 +110,8 @@ class View():
         invert = np.ones(fertility_map.shape) - fertility_map
         colour_invert = 255*invert
         fertility_list = list(colour_invert)
-        _, g, _ = self.__GREEN
-        make_green = lambda px: (int(px), g, int(px)) if px != 255 else self.__WHITE
+        _, g, _ = self._GREEN
+        make_green = lambda px: (int(px), g, int(px)) if px != 255 else self._WHITE
         fertility_list = [list(map(make_green, row)) for row in fertility_list]
         # The above code is very specific to how shades of green scale (in rgb colour format).
         return np.array(fertility_list)
