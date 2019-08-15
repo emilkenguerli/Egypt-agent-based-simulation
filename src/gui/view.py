@@ -88,7 +88,7 @@ class View():
 
         grain_per_worker = grain/num_workers
         gpw_min, gpw_max = grain_per_worker.min(), grain_per_worker.max()
-        alpha = np.interp(grain_per_worker, (gpw_min, gpw_max), (0.2, 0.8))
+        alpha = np.interp(grain_per_worker, (gpw_min, gpw_max), (0.2, 1.0))
         rgba[:,-1] = alpha
         return rgba
 

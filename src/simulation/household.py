@@ -1,8 +1,6 @@
 import math
-import random
 
 import numpy as np
-import pandas as pd
 
 
 class Household:
@@ -44,23 +42,24 @@ class Household:
         self.ambition = model.generate_ambition(min_ambition)
         self.position = model.generate_position(env)
 
-        self.columns = ['id','num_workers','grain','fields_owned','generation_countdown',
-            'competency','ambition','x_pos','y_pos', 'knowledge_radius']
+        self.columns = ['id', 'num_workers', 'grain', 'fields_owned', 'generation_countdown',
+            'competency', 'ambition', 'x_pos','y_pos', 'knowledge_radius']
 
     def statistics(self):
         """Return dictionary of attribute information."""
         # TODO: more pythonic to use internal __dict__ attribute (possibly faster as well)
-        x, y = self.position
+        x_pos, y_pos = self.position
         knowledge_radius = self.KNOWLEDGE_RATIO*self.num_workers
         data_dict = {'id':self.id, 'num_workers':self.num_workers, 'grain':self.grain, 'fields_owned':self.fields_owned,
             'generation_countdown':self.generation_countdown, 'competency':self.competency, 'ambition':self.ambition,
-                'x_pos':x, 'y_pos':y, 'knowledge_radius':knowledge_radius}
+                'x_pos':x_pos, 'y_pos':y_pos, 'knowledge_radius':knowledge_radius}
         return data_dict
 
     def claim_field(self, environment):
         """Not implemented."""
         field_coord = self.model.choose_claim_field(self.KNOWLEDGE_RATIO, self.num_workers, self.position, environment)
-        available_area = self.CLAIM_RATIO*self.num_workers
+        available_area = self.CLAIM_RATIO * self.num_workers
+        claimed_area = available_area * self.ambition
         claimed_field = (field_coord, available_area)
         self.claimed_field = claimed_field
 
@@ -74,18 +73,20 @@ class Household:
         # On average, the difference between max_area and area increases as the number of workers increase.
         # This is representative of increasing economies of scale (or inefficiencies that arise from an
         # increasing labour force).
+
         nrows, ncols = environment.shape
         diff = int(sqrt_area/2)
         x_start = max(0, x_field - diff)
         y_start = max(0, y_field - diff)
-        x_end = min(ncols-1, x_field + diff)
-        y_end = min(nrows-1, y_field + diff)
+        x_end = min(ncols - 1, x_field + diff)
+        y_end = min(nrows - 1, y_field + diff)
         fertility = environment.fertility_map[y_start:y_end, x_start:x_end]
+
         field = fertility * self.MAX_POTENTIAL_YIELD
         available_harvest = field.sum()
         workers_capability = self.num_workers * self.WORKER_CAPABILITY
         potential_harvest = min(available_harvest, workers_capability)
-        self.harvest = potential_harvest * self.competency
+        self.grain = self.grain + potential_harvest * self.competency
 
     def consume_grain(self, environment):
         """Not implemented."""
@@ -97,5 +98,5 @@ class Household:
 
     def relocate(self, environment):
         """Assign new position to household."""
-        x, y = self.model.relocate(self.KNOWLEDGE_RATIO, self.num_workers, self.position, environment)
-        self.position = (x, y)
+        new_x, new_y = self.model.relocate(self.KNOWLEDGE_RATIO, self.num_workers, self.position, environment)
+        self.position = (new_x, new_y)
