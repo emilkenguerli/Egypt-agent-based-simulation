@@ -44,6 +44,9 @@ class View():
         fertility_img = self.fertility_img(fertility_map)
         display = fertility_img + river_img
 
+        change_arrid = lambda x: x if tuple(x) != self._BLACK else self._WHITE
+        display = vec_change_arrid = np.apply_along_axis(change_arrid, axis=2, arr=display)
+
         fig = plt.figure()
         x_pos, y_pos = self.get_pos(statistics)
         area = self.get_area(statistics)
@@ -111,7 +114,7 @@ class View():
         colour_invert = 255*invert
         fertility_list = list(colour_invert)
         _, g, _ = self._GREEN
-        make_green = lambda px: (int(px), g, int(px)) if px != 255 else self._WHITE
+        make_green = lambda px: (int(px), g, int(px)) if px != 255 else self._BLACK
         fertility_list = [list(map(make_green, row)) for row in fertility_list]
         # The above code is very specific to how shades of green scale (in rgb colour format).
         return np.array(fertility_list)

@@ -38,9 +38,9 @@ class AgentModel(AbstractModel):
             x, y = super().generate_position(environment)
         return (x, y)
 
-    def choose_claim_fields(self, knowledge_ratio, num_workers, current_position, environment):
+    def choose_claim_field(self, knowledge_ratio, num_workers, current_position, environment):
         """Not implemented."""
-        return super().choose_claim_fields(num_workers, knowledge_ratio, current_position, environment)
+        return super().choose_claim_field(num_workers, knowledge_ratio, current_position, environment)
 
     def relocate(self, knowledge_ratio, num_workers, current_position, environment):
         """Extend superclass method."""

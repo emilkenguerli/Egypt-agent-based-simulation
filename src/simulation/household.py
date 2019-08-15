@@ -1,3 +1,4 @@
+import math
 import random
 
 import numpy as np
@@ -15,12 +16,12 @@ class Household:
         """Initialise household attributes upon object instantiation.
 
         Keyword arguments:
+        KNOWLEDGE_RATIO      -- knowledge_radius per household specified in pixels
         model                -- model that defines the decisions made by the household
         id                   -- household identification number
         num_workers          -- size of household
         grain                -- current amount of grain held by household
         generation_countdown -- not implemented
-        KNOWLEDGE_RATIO      -- knowledge_radius per household specified in pixels
         min_competency       -- generated competency between min_competency and 1
         min_ambition         -- generated ambition between min_ambition and 1
         env                  -- used to determine the household's starting position
@@ -30,6 +31,8 @@ class Household:
         """
         self.KNOWLEDGE_RATIO = rconfig['knowledge_ratio'] # In pixels.
         self.CLAIM_RATIO = rconfig['claim_ratio']
+        self.MAX_POTENTIAL_YIELD = rconfig['maximum_potential_yield']
+        self.WORKER_CAPABILITY = rconfig['worker_capability']
 
         self.model = model
         self.id = id
@@ -40,9 +43,9 @@ class Household:
         self.competency = model.generate_competency(min_competency)
         self.ambition = model.generate_ambition(min_ambition)
         self.position = model.generate_position(env)
+
         self.columns = ['id','num_workers','grain','fields_owned','generation_countdown',
             'competency','ambition','x_pos','y_pos', 'knowledge_radius']
-
 
     def statistics(self):
         """Return dictionary of attribute information."""
@@ -54,22 +57,35 @@ class Household:
                 'x_pos':x, 'y_pos':y, 'knowledge_radius':knowledge_radius}
         return data_dict
 
-    def claim_fields(self, environment):
+    def claim_field(self, environment):
         """Not implemented."""
-        claim_chance = random.random()
-        if(claim_chance < self.ambition and self.num_workers > self.fields_owned):
-            x_field, y_field = self.model.choose_claim_fields(self.KNOWLEDGE_RATIO, self.num_workers, self.position, environment)
-
-            # y_max, x_max = environment.shape
-            # if(y_field > 0 and x_field > 0 and y_field < y_max and x_field < x_max):
-            #     claimed = environment.claim_map[y_field, x_field]
-            #     fertile = environment.fertility_map[y_field, x_field]
-            #     if not claimed and not fertile:
-                    # environment.claim_map[y_field, x_field] = self.id
+        field_coord = self.model.choose_claim_field(self.KNOWLEDGE_RATIO, self.num_workers, self.position, environment)
+        available_area = self.CLAIM_RATIO*self.num_workers
+        claimed_field = (field_coord, available_area)
+        self.claimed_field = claimed_field
 
     def farm(self, environment):
         """Not implemented."""
-        pass
+        field_coord, available_area = self.claimed_field
+        x_field, y_field = field_coord
+        sqrt_area = math.sqrt(available_area)
+        claimed_area = math.floor(sqrt_area)**2
+        # Converts the max_area of a claim field to a square set of pixels.
+        # On average, the difference between max_area and area increases as the number of workers increase.
+        # This is representative of increasing economies of scale (or inefficiencies that arise from an
+        # increasing labour force).
+        nrows, ncols = environment.shape
+        diff = int(sqrt_area/2)
+        x_start = max(0, x_field - diff)
+        y_start = max(0, y_field - diff)
+        x_end = min(ncols-1, x_field + diff)
+        y_end = min(nrows-1, y_field + diff)
+        fertility = environment.fertility_map[y_start:y_end, x_start:x_end]
+        field = fertility * self.MAX_POTENTIAL_YIELD
+        available_harvest = field.sum()
+        workers_capability = self.num_workers * self.WORKER_CAPABILITY
+        potential_harvest = min(available_harvest, workers_capability)
+        self.harvest = potential_harvest * self.competency
 
     def consume_grain(self, environment):
         """Not implemented."""
@@ -83,7 +99,3 @@ class Household:
         """Assign new position to household."""
         x, y = self.model.relocate(self.KNOWLEDGE_RATIO, self.num_workers, self.position, environment)
         self.position = (x, y)
-
-    def get_grain(self):
-        """Return current grain amount held by household."""
-        return self.grain

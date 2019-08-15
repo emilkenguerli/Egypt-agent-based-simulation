@@ -63,9 +63,9 @@ def run_simulation(presenter):
     while presenter.num_generations > 0:
         if not households:
             break
-        households.sort(key=lambda x: x.get_grain(), reverse=True)
+        households.sort(key=lambda x: x.grain, reverse=True)
         for house in households:
-            house.claim_fields(env)
+            house.claim_field(env)
             house.farm(env)
             house.relocate(env)
         presenter.update()
@@ -73,9 +73,6 @@ def run_simulation(presenter):
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger()
-    logger.setLevel(100)
-
     river_map, shape = setup_map('../../resources/maps/river_map.png')
     fertility_map, shape = setup_map('../../resources/maps/fertility_map.png')
     wconfig = load_config('../wconfig.yml')

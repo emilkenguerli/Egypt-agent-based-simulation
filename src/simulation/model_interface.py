@@ -41,7 +41,7 @@ class AbstractModel(ABC):
         return (x, y)
 
     @abstractmethod
-    def choose_claim_fields(self, knowledge_ratio, num_workers, current_position, environment):
+    def choose_claim_field(self, knowledge_ratio, num_workers, current_position, environment):
         """Not yet implemented."""
         knowledge_radius = knowledge_ratio*num_workers
         x_pos, y_pos = current_position
