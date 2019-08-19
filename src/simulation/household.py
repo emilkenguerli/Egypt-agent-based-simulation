@@ -1,7 +1,5 @@
 import math
 
-import numpy as np
-
 
 class Household:
     """Represent communities or households in the neolithic era of ancient Egypt"
@@ -10,7 +8,8 @@ class Household:
     autonomous agent in the ABMS (Agent-based Model Simulation).
     """
 
-    def __init__(self, model, id, num_workers, grain, generation_countdown, min_competency, min_ambition, rconfig, env):
+    def __init__(self, model, id, num_workers, grain, generation_countdown, min_competency,
+                        min_ambition, rconfig, env):
         """Initialise household attributes upon object instantiation.
 
         Keyword arguments:
@@ -43,36 +42,32 @@ class Household:
         self.position = model.generate_position(env)
 
         self.columns = ['id', 'num_workers', 'grain', 'fields_owned', 'generation_countdown',
-            'competency', 'ambition', 'x_pos','y_pos', 'knowledge_radius']
+                    'competency', 'ambition', 'x_pos', 'y_pos', 'knowledge_radius']
 
     def statistics(self):
         """Return dictionary of attribute information."""
-        # TODO: more pythonic to use internal __dict__ attribute (possibly faster as well)
         x_pos, y_pos = self.position
-        knowledge_radius = self.KNOWLEDGE_RATIO*self.num_workers
-        data_dict = {'id':self.id, 'num_workers':self.num_workers, 'grain':self.grain, 'fields_owned':self.fields_owned,
-            'generation_countdown':self.generation_countdown, 'competency':self.competency, 'ambition':self.ambition,
-                'x_pos':x_pos, 'y_pos':y_pos, 'knowledge_radius':knowledge_radius}
+        knowledge_radius = self.KNOWLEDGE_RATIO * self.num_workers
+        data_dict = {'id':self.id, 'num_workers':self.num_workers, 'grain':self.grain,
+                    'fields_owned':self.fields_owned, 'generation_countdown':self.generation_countdown,
+                                'competency':self.competency, 'ambition':self.ambition, 'x_pos':x_pos,
+                                            'y_pos':y_pos, 'knowledge_radius':knowledge_radius}
         return data_dict
 
     def claim_field(self, environment):
         """Not implemented."""
-        field_coord = self.model.choose_claim_field(self.KNOWLEDGE_RATIO, self.num_workers, self.position, environment)
+        field_coord = self.model.choose_claim_field(self.KNOWLEDGE_RATIO, self.num_workers,
+                    self.position, environment)
         available_area = self.CLAIM_RATIO * self.num_workers
         claimed_area = available_area * self.ambition
-        claimed_field = (field_coord, available_area)
-        self.claimed_field = claimed_field
+        claimed_field = (field_coord, claimed_area)
+        return claimed_field
 
-    def farm(self, environment):
+    def farm(self, claimed_field, environment):
         """Not implemented."""
-        field_coord, available_area = self.claimed_field
+        field_coord, available_area = claimed_field
         x_field, y_field = field_coord
         sqrt_area = math.sqrt(available_area)
-        claimed_area = math.floor(sqrt_area)**2
-        # Converts the max_area of a claim field to a square set of pixels.
-        # On average, the difference between max_area and area increases as the number of workers increase.
-        # This is representative of increasing economies of scale (or inefficiencies that arise from an
-        # increasing labour force).
 
         nrows, ncols = environment.shape
         diff = int(sqrt_area/2)
@@ -98,5 +93,6 @@ class Household:
 
     def relocate(self, environment):
         """Assign new position to household."""
-        new_x, new_y = self.model.relocate(self.KNOWLEDGE_RATIO, self.num_workers, self.position, environment)
+        new_x, new_y = self.model.relocate(self.KNOWLEDGE_RATIO, self.num_workers,
+                    self.position, environment)
         self.position = (new_x, new_y)

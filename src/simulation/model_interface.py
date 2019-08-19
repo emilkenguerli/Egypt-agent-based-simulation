@@ -37,16 +37,17 @@ class AbstractModel(ABC):
     def generate_position(self, environment):
         """Generate and return random household coordinate tuple."""
         nrows, ncols = environment.shape
-        x, y = random.randint(0, ncols-1), random.randint(0, nrows-1)
-        return (x, y)
+        x_pos, y_pos = random.randint(0, ncols-1), random.randint(0, nrows-1)
+        return (x_pos, y_pos)
 
     @abstractmethod
     def choose_claim_field(self, knowledge_ratio, num_workers, current_position, environment):
         """Not yet implemented."""
         knowledge_radius = knowledge_ratio*num_workers
         x_pos, y_pos = current_position
-        x_field = x_pos + int(random.uniform(0, knowledge_radius)) # Create helper function that returns border if over border.
+        x_field = x_pos + int(random.uniform(0, knowledge_radius))
         y_field = y_pos + int(random.uniform(0, knowledge_radius))
+        # TODO: Create helper function that returns border if over border.
         return (x_field, y_field)
 
     @abstractmethod
