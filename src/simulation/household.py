@@ -1,4 +1,5 @@
 import math
+import random
 
 
 class Household:
@@ -30,6 +31,8 @@ class Household:
         self.CLAIM_RATIO = rconfig['claim_ratio']
         self.MAX_POTENTIAL_YIELD = rconfig['maximum_potential_yield']
         self.WORKER_CAPABILITY = rconfig['worker_capability']
+        self.WORKER_APPETITE = rconfig['worker_appetite']
+        self.GROWTH_RATE = rconfig['growth_rate']
 
         self.model = model
         self.id = id
@@ -83,13 +86,26 @@ class Household:
         potential_harvest = min(available_harvest, workers_capability)
         self.grain = self.grain + potential_harvest * self.competency
 
-    def consume_grain(self, environment):
+    def consume_grain(self):
         """Not implemented."""
-        pass
+        self.grain = self.grain - self.num_workers * self.WORKER_APPETITE
+        if(self.grain < 0):
+            resiliency = self.competency * self.ambition
+            negative_workers = (self.grain / self.WORKER_APPETITE) * (1 - resiliency)
+            self.num_workers += math.floor(negative_workers)
+            self.grain = 0
 
     def storage_loss(self, environment):
         """Not implemented."""
         pass
+
+    def grow(self):
+        increase = self.num_workers * self.GROWTH_RATE
+        new_workers = math.floor(increase)
+        fraction = increase - new_workers
+        if(random.random() < fraction):
+            new_workers += 1
+        self.num_workers += new_workers
 
     def relocate(self, environment):
         """Assign new position to household."""

@@ -65,6 +65,10 @@ def run_simulation(presenter):
         for house in households:
             claimed_field = house.claim_field(env)
             house.farm(claimed_field, env)
+            house.consume_grain()
+            if(house.num_workers <= 0):
+                households.remove(house)
+            house.grow()
             house.relocate(env)
         presenter.update()
         presenter.num_generations -= 1
