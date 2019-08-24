@@ -45,7 +45,7 @@ class View():
         display = fertility_img + river_img
 
         change_arrid = lambda x: x if tuple(x) != self._BLACK else self._WHITE
-        display = vec_change_arrid = np.apply_along_axis(change_arrid, axis=2, arr=display)
+        display = np.apply_along_axis(change_arrid, axis=2, arr=display)
 
         fig = plt.figure()
         x_pos, y_pos = self.get_pos(statistics)
@@ -67,9 +67,8 @@ class View():
 
     def get_area(self, statistics):
         """Return area of the marker to be plotted on the scatter figure."""
-        num_workers = statistics['num_workers']
         knowledge_radius = statistics['knowledge_radius']
-        return math.pi*(knowledge_radius**2)
+        return knowledge_radius**2
 
     def get_rgba(self, statistics):
         """Return numpy array rgba pixels values for all the household.

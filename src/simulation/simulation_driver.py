@@ -1,3 +1,4 @@
+import math
 import uuid
 
 import matplotlib.image as mpimg
@@ -7,6 +8,15 @@ from environment import Environment
 from gui.presenter import Presenter
 from household import Household
 from model.agent_model import AgentModel
+
+
+def load_config(config_file):
+    """Load and return the global configuration dictionary."""
+    with open(config_file, 'r') as stream:
+        try:
+            return yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
 
 
 def setup_map(map_file):
@@ -38,15 +48,6 @@ def setup_households(env, w_config, r_config):
     return households
 
 
-def load_config(config_file):
-    """Load and return the global configuration dictionary."""
-    with open(config_file, 'r') as stream:
-        try:
-            return yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
-
-
 def run_simulation(presenter):
     """Run the ancient egypt simulation.
 
@@ -70,15 +71,37 @@ def run_simulation(presenter):
                 households.remove(house)
             house.grow()
             house.relocate(env)
+        interact(households)
         presenter.update()
         presenter.num_generations -= 1
 
 
+def interact(households):
+    for house_1 in households:
+        for house_2 in households:
+            # FIXME: currently interacting households will interact twice
+            if house_1.id is not house_2.id and intersect(house_1, house_2):
+                pass
+
+
+def intersect(house_1, house_2):
+    x_1, y_1 = house_1.position
+    x_2, y_2 = house_2.position
+    square_dist = (x_1 - x_2)**2 + (y_1 - y_2)**2
+    distance = math.sqrt(square_dist)
+    r_1 = house_1.knowledge_radius
+    r_2 = house_2.knowledge_radius
+    if(distance <= (r_1 + r_2)):
+        return True
+    else:
+        return False
+
+
 if __name__ == "__main__":
-    river_map, map_shape = setup_map('../../resources/maps/river_map.png')
-    fertility_map, map_shape = setup_map('../../resources/maps/fertility_map.png')
     write_config = load_config('../w_config.yml')
     read_config = load_config('../r_config.yml')
+    river_map, map_shape = setup_map('../../resources/maps/river_map.png')
+    fertility_map, map_shape = setup_map('../../resources/maps/fertility_map.png')
     num_generations = write_config['num_generations']
     environment = Environment(river_map, fertility_map, map_shape)
     households = setup_households(environment, write_config, read_config)

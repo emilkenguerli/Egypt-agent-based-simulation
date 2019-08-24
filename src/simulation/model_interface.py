@@ -41,9 +41,8 @@ class AbstractModel(ABC):
         return (x_pos, y_pos)
 
     @abstractmethod
-    def choose_claim_field(self, knowledge_ratio, num_workers, current_position, environment):
+    def choose_claim_field(self, knowledge_radius, current_position, environment):
         """Not yet implemented."""
-        knowledge_radius = knowledge_ratio*num_workers
         x_pos, y_pos = current_position
         x_field = x_pos + int(random.uniform(0, knowledge_radius))
         y_field = y_pos + int(random.uniform(0, knowledge_radius))
@@ -51,7 +50,7 @@ class AbstractModel(ABC):
         return (x_field, y_field)
 
     @abstractmethod
-    def relocate(self, knowledge_ratio, num_workers, current_position, environment):
+    def relocate(self, knowledge_radius, current_position, environment):
         """Return relocation position tuple.
 
         Relocation position is within the household's knowledge_radius. The new
@@ -59,7 +58,6 @@ class AbstractModel(ABC):
         """
         nrow, ncol = environment.shape
         x_pos, y_pos = current_position
-        knowledge_radius = num_workers*knowledge_ratio
         new_x = x_pos + int(random.uniform(-knowledge_radius, knowledge_radius))
         new_y = y_pos + int(random.uniform(-knowledge_radius, knowledge_radius))
         if new_x < 0 or new_x > ncol-1 or new_y < 0 or new_y > nrow-1:

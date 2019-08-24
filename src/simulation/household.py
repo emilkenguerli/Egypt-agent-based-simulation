@@ -47,20 +47,22 @@ class Household:
         self.columns = ['id', 'num_workers', 'grain', 'fields_owned', 'generation_countdown',
                     'competency', 'ambition', 'x_pos', 'y_pos', 'knowledge_radius']
 
+    @property
+    def knowledge_radius(self):
+        return self.KNOWLEDGE_RATIO * self.num_workers
+
     def statistics(self):
         """Return dictionary of attribute information."""
         x_pos, y_pos = self.position
-        knowledge_radius = self.KNOWLEDGE_RATIO * self.num_workers
         data_dict = {'id':self.id, 'num_workers':self.num_workers, 'grain':self.grain,
                     'fields_owned':self.fields_owned, 'generation_countdown':self.generation_countdown,
                                 'competency':self.competency, 'ambition':self.ambition, 'x_pos':x_pos,
-                                            'y_pos':y_pos, 'knowledge_radius':knowledge_radius}
+                                            'y_pos':y_pos, 'knowledge_radius': self.knowledge_radius}
         return data_dict
 
     def claim_field(self, environment):
         """Not implemented."""
-        field_coord = self.model.choose_claim_field(self.KNOWLEDGE_RATIO, self.num_workers,
-                    self.position, environment)
+        field_coord = self.model.choose_claim_field(self.knowledge_radius, self.position, environment)
         available_area = self.CLAIM_RATIO * self.num_workers
         claimed_area = available_area * self.ambition
         claimed_field = (field_coord, claimed_area)
@@ -109,6 +111,5 @@ class Household:
 
     def relocate(self, environment):
         """Assign new position to household."""
-        new_x, new_y = self.model.relocate(self.KNOWLEDGE_RATIO, self.num_workers,
-                    self.position, environment)
+        new_x, new_y = self.model.relocate(self.knowledge_radius, self.position, environment)
         self.position = (new_x, new_y)

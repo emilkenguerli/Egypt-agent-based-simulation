@@ -1,8 +1,8 @@
 num_households: 15
-num_generations: 10
+num_generations: 3
 
 households:
-  num_workers: 9
+  num_workers: 15
   grain: 3000
   generation_countdown: 15 # Currently does do anything
   min_competency: 0.2
