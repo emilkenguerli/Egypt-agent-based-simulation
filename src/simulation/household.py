@@ -1,5 +1,6 @@
 import math
 import random
+import statistics
 
 
 class Household:
@@ -116,7 +117,19 @@ class Household:
         return self.interaction
 
     def plunder(self, household):
-        pass
+        total_workers = self.num_workers + household.num_workers
+        capability = statistics.mean((self.num_workers / total_workers, self.ambition, self.competency))
+        rival_capability = statistics.mean((household.num_workers / total_workers, household.ambition, household.competency))
+        if(capability > rival_capability):
+            plunder_probability = capability - rival_capability
+            plunder = random.random()
+            if plunder < plunder_probability:
+                stolen_grain = plunder * household.grain
+                stolen_workers = math.ceil(plunder * household.num_workers)
+                household.grain -= stolen_grain
+                self.grain += stolen_grain
+                household.num_workers -= stolen_workers
+                self.num_workers += stolen_workers
 
     def collaborate(self, household):
         pass

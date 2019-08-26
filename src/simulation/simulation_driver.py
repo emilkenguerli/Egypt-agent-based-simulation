@@ -64,6 +64,7 @@ def run_simulation(presenter):
             break
         households.sort(key=lambda x: x.grain, reverse=True)
         for house in households:
+            house.interaction = 0
             claimed_field = house.claim_field(env)
             house.farm(claimed_field, env)
             house.consume_grain()
