@@ -64,3 +64,7 @@ class AbstractModel(ABC):
             return (x_pos, y_pos)
         else:
             return (new_x, new_y)
+
+    @abstractmethod
+    def strategy(self, household_id):
+        return random.randint(-1, 1)

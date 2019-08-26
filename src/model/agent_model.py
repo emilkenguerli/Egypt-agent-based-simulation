@@ -50,3 +50,6 @@ class AgentModel(AbstractModel):
             return (x, y)
         else:
             return current_position
+
+    def strategy(self, household_id):
+        return super().strategy(household_id)

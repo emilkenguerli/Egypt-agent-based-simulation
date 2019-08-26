@@ -77,11 +77,13 @@ def run_simulation(presenter):
 
 
 def interact(households):
-    for house_1 in households:
-        for house_2 in households:
-            # FIXME: currently interacting households will interact twice
-            if house_1.id is not house_2.id and intersect(house_1, house_2):
-                pass
+    num_households = len(households)
+    for index_1 in range(num_households):
+        for index_2 in range(index_1 + 1, num_households):
+            house_1 = households[index_1]
+            house_2 = households[index_2]
+            if intersect(house_1, house_2):
+                interaction(house_1, house_2)
 
 
 def intersect(house_1, house_2):
@@ -95,6 +97,19 @@ def intersect(house_1, house_2):
         return True
     else:
         return False
+
+
+def interaction(house_1, house_2):
+    action_1 = house_1.strategy(house_2)
+    action_2 = house_2.strategy(house_1)
+    if action_1 < 0 and action_2 < 0:
+        house_1.plunder(house_2); house_2.plunder(house_1)
+    elif action_1 < 0 and action_2 >= 0:
+        house_1.plunder(house_2)
+    elif action_1 >= 0 and action_2 < 0:
+        house_2.plunder(house_1)
+    elif action_1 > 0 and action_2 > 0:
+        house_1.collaborate(house_2); house_2.collaborate(house_1)
 
 
 if __name__ == "__main__":

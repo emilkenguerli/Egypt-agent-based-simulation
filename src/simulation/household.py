@@ -39,13 +39,14 @@ class Household:
         self.num_workers = num_workers
         self.grain = grain
         self.fields_owned = 0
+        self.interaction = 0
         self.generation_countdown = generation_countdown
         self.competency = model.generate_competency(min_competency)
         self.ambition = model.generate_ambition(min_ambition)
         self.position = model.generate_position(env)
 
-        self.columns = ['id', 'num_workers', 'grain', 'fields_owned', 'generation_countdown',
-                    'competency', 'ambition', 'x_pos', 'y_pos', 'knowledge_radius']
+        self.columns = ['id', 'num_workers', 'grain', 'fields_owned', 'interaction',
+                    'generation_countdown', 'competency', 'ambition']
 
     @property
     def knowledge_radius(self):
@@ -54,10 +55,10 @@ class Household:
     def statistics(self):
         """Return dictionary of attribute information."""
         x_pos, y_pos = self.position
-        data_dict = {'id':self.id, 'num_workers':self.num_workers, 'grain':self.grain,
-                    'fields_owned':self.fields_owned, 'generation_countdown':self.generation_countdown,
-                                'competency':self.competency, 'ambition':self.ambition, 'x_pos':x_pos,
-                                            'y_pos':y_pos, 'knowledge_radius': self.knowledge_radius}
+        data_dict = {'x_pos':x_pos, 'y_pos':y_pos, 'knowledge_radius': self.knowledge_radius}
+        for attr, value in self.__dict__.items():
+            if attr in self.columns:
+                data_dict[attr] = value
         return data_dict
 
     def claim_field(self, environment):
@@ -97,10 +98,6 @@ class Household:
             self.num_workers += math.floor(negative_workers)
             self.grain = 0
 
-    def storage_loss(self, environment):
-        """Not implemented."""
-        pass
-
     def grow(self):
         increase = self.num_workers * self.GROWTH_RATE
         new_workers = math.floor(increase)
@@ -113,3 +110,13 @@ class Household:
         """Assign new position to household."""
         new_x, new_y = self.model.relocate(self.knowledge_radius, self.position, environment)
         self.position = (new_x, new_y)
+
+    def strategy(self, household):
+        self.interaction = self.model.strategy(household.id)
+        return self.interaction
+
+    def plunder(self, household):
+        pass
+
+    def collaborate(self, household):
+        pass

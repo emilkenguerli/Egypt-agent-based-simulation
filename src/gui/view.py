@@ -24,10 +24,10 @@ class View():
         these two layers.
         """
         self._FRAME_PATH = '../../resources/frames/'
+        self._RIVER_BLUE = (102, 178, 255)
+        self._GREEN = (0, 255, 0)
         self._WHITE = (255, 255, 255)
         self._BLACK = (0, 0, 0)
-        self._BLUE = (102, 178, 255)
-        self._GREEN = (0, 255, 0)
         self.presenter = presenter
         self.frame_count = 0
 
@@ -51,7 +51,8 @@ class View():
         x_pos, y_pos = self.get_pos(statistics)
         area = self.get_area(statistics)
         rgba = self.get_rgba(statistics)
-        plt.scatter(x_pos, y_pos, s=area, color=rgba)
+        edges = self.get_edges(statistics, rgba)
+        plt.scatter(x_pos, y_pos, s=area, color=rgba, edgecolors=edges)
         plt.imshow(display)
         path = self._FRAME_PATH + 'gen_{0}'.format(self.frame_count)
         plt.savefig(path)
@@ -91,6 +92,17 @@ class View():
         rgba[:,-1] = alpha
         return rgba
 
+    def get_edges(self, statistics, rgba):
+        interaction = statistics['interaction']
+        def to_edges(action, tuple):
+            if action < 0:
+                return (1, 0, 0)
+            elif action > 0:
+                return (0, 0, 1)
+            else:
+                return tuple
+        return [to_edges(action, tuple) for action, tuple in zip(interaction, rgba)]
+
     def river_img(self, river_map):
         """Convert river_map into river_img and return as numpy array.
 
@@ -98,7 +110,7 @@ class View():
         blue otherwise black.
         """
         river_list = list(river_map)
-        make_blue = lambda px: self._BLUE if px == 1.0 else self._BLACK
+        make_blue = lambda px: self._RIVER_BLUE if px == 1.0 else self._BLACK
         # Assumes river pixels in river map have a value of 1.0.
         river_list = [list(map(make_blue, row)) for row in river_list]
         return np.array(river_list)
