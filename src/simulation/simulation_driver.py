@@ -59,9 +59,10 @@ def run_simulation(presenter):
     """
     households = presenter.households
     env = presenter.environment
-    while presenter.num_generations > 0:
+    while presenter.generation < presenter.num_generations:
         if not households:
             break
+        presenter.update()
         households.sort(key=lambda x: x.grain, reverse=True)
         for house in households:
             house.interaction = 0
@@ -73,8 +74,7 @@ def run_simulation(presenter):
             house.grow()
             house.relocate(env)
         interact(households)
-        presenter.update()
-        presenter.num_generations -= 1
+        presenter.generation += 1
 
 
 def interact(households):
@@ -85,6 +85,13 @@ def interact(households):
             house_2 = households[index_2]
             if intersect(house_1, house_2):
                 interaction(house_1, house_2)
+                if house_1.num_workers <= 0:
+                    households.remove(house_1)
+                    index_1 -= 1
+                elif house_2.num_workers <= 0:
+                    households.remove(house_2)
+                    index_2 -= 1
+
 
 
 def intersect(house_1, house_2):

@@ -1,5 +1,6 @@
 import math
 
+import pandas as pd
 from matplotlib.animation import FuncAnimation
 from matplotlib.animation import ArtistAnimation
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -29,7 +30,8 @@ class View():
         self._WHITE = (255, 255, 255)
         self._BLACK = (0, 0, 0)
         self.presenter = presenter
-        self.frame_count = 0
+        self.pop_df = pd.DataFrame(columns=['generation', 'population'])
+        self.gini_df = pd.DataFrame(columns=['generation', 'gini-coefficient'])
 
     def save_frame(self):
         """Save household and landscape information as a frame.
@@ -43,23 +45,62 @@ class View():
         river_img = self.river_img(river_map)
         fertility_img = self.fertility_img(fertility_map)
         display = fertility_img + river_img
-
         change_arrid = lambda x: x if tuple(x) != self._BLACK else self._WHITE
         display = np.apply_along_axis(change_arrid, axis=2, arr=display)
 
         fig = plt.figure()
+        grid = plt.GridSpec(2, 2, wspace=0.3, hspace=0.5)
+
         x_pos, y_pos = self.get_pos(statistics)
         area = self.get_area(statistics)
         rgba = self.get_rgba(statistics)
         edges = self.get_edges(statistics, rgba)
-        plt.scatter(x_pos, y_pos, s=area, color=rgba, edgecolors=edges)
-        plt.imshow(display)
-        path = self._FRAME_PATH + 'gen_{0}'.format(self.frame_count)
+        sim_axis = plt.subplot(grid[0:, 0])
+        sim_axis.set_title('Year {0}'.format(self.presenter.generation))
+        sim_axis.scatter(x_pos, y_pos, s=area, color=rgba, edgecolors=edges)
+        sim_axis.imshow(display)
+
+        self.record_population(statistics)
+        graph_1_axis = plt.subplot(grid[0, 1])
+        graph_1_axis.set_title('Total Population')
+        graph_1_axis.set_xlim([0, self.presenter.num_generations])
+        graph_1_axis.plot(self.pop_df['generation'], self.pop_df['population'])
+
+        self.record_gini(statistics)
+        graph_2_axis = plt.subplot(grid[1, 1])
+        graph_2_axis.set_title('Gini-coefficient')
+        graph_2_axis.set_xlim([0, self.presenter.num_generations])
+        graph_2_axis.set_ylim([0, 1])
+        graph_2_axis.plot(self.gini_df['generation'], self.gini_df['gini-coefficient'], color=(1,0,0))
+
+        path = self._FRAME_PATH + 'yr_{0}'.format(self.presenter.generation)
         plt.savefig(path)
-        self.frame_count += 1
         plt.close('all')
-        # TODO: It may be worth exploring updating the current figure instead
-        # of replotting for every frame.
+
+    def river_img(self, river_map):
+        """Convert river_map into river_img and return as numpy array.
+
+        Changing grayscale format to rgb format. River pixels will be mapped to
+        blue otherwise black.
+        """
+        river_list = list(river_map)
+        make_blue = lambda px: self._RIVER_BLUE if px == 1.0 else self._BLACK
+        river_list = [list(map(make_blue, row)) for row in river_list]
+        return np.array(river_list)
+
+    def fertility_img(self, fertility_map):
+        """Convert fertility_map into fertility_img and return as numpy array.
+
+        Changing grayscale format to rgb format. Fertility pixels will be mapped
+        to a shade of green otherwise white.
+        """
+        invert = np.ones(fertility_map.shape) - fertility_map
+        colour_invert = 255*invert
+        fertility_list = list(colour_invert)
+        _, g, _ = self._GREEN
+        make_green = lambda px: (int(px), g, int(px)) if px != 255 else self._BLACK
+        fertility_list = [list(map(make_green, row)) for row in fertility_list]
+        return np.array(fertility_list)
 
     def get_pos(self, statistics):
         """Return position tuple from household statistics."""
@@ -103,29 +144,21 @@ class View():
                 return tuple
         return [to_edges(action, tuple) for action, tuple in zip(interaction, rgba)]
 
-    def river_img(self, river_map):
-        """Convert river_map into river_img and return as numpy array.
+    def record_population(self, statistics):
+        generation = self.presenter.generation
+        population = statistics['num_workers'].sum()
+        row = {'generation':generation, 'population': population}
+        self.pop_df = self.pop_df.append(row, ignore_index=True)
 
-        Changing grayscale format to rgb format. River pixels will be mapped to
-        blue otherwise black.
-        """
-        river_list = list(river_map)
-        make_blue = lambda px: self._RIVER_BLUE if px == 1.0 else self._BLACK
-        # Assumes river pixels in river map have a value of 1.0.
-        river_list = [list(map(make_blue, row)) for row in river_list]
-        return np.array(river_list)
-
-    def fertility_img(self, fertility_map):
-        """Convert fertility_map into fertility_img and return as numpy array.
-
-        Changing grayscale format to rgb format. Fertility pixels will be mapped
-        to a shade of green otherwise white.
-        """
-        invert = np.ones(fertility_map.shape) - fertility_map
-        colour_invert = 255*invert
-        fertility_list = list(colour_invert)
-        _, g, _ = self._GREEN
-        make_green = lambda px: (int(px), g, int(px)) if px != 255 else self._BLACK
-        fertility_list = [list(map(make_green, row)) for row in fertility_list]
-        # The above code is very specific to how shades of green scale (in rgb colour format).
-        return np.array(fertility_list)
+    def record_gini(self, statistics):
+        generation = self.presenter.generation
+        total_grain = statistics['grain'].sum()
+        grain = np.sort(statistics['grain'])
+        wealth_prop = grain/total_grain
+        num_households = len(statistics)
+        pop_prop = np.ones(num_households)/num_households
+        richer_prop = np.linspace(num_households - 1, 0, num=num_households)/num_households
+        score = wealth_prop * (pop_prop + 2 * richer_prop)
+        gini = 1 - score.sum()
+        row = {'generation':generation, 'gini-coefficient':gini}
+        self.gini_df = self.gini_df.append(row, ignore_index=True)
