@@ -120,16 +120,24 @@ class Household:
         total_workers = self.num_workers + household.num_workers
         capability = statistics.mean((self.num_workers / total_workers, self.ambition, self.competency))
         rival_capability = statistics.mean((household.num_workers / total_workers, household.ambition, household.competency))
-        if(capability > rival_capability):
-            plunder_probability = capability - rival_capability
-            plunder = random.random()
-            if plunder < plunder_probability:
-                stolen_grain = plunder * household.grain
-                stolen_workers = math.ceil(plunder * household.num_workers)
-                household.grain -= stolen_grain
-                self.grain += stolen_grain
-                household.num_workers -= stolen_workers
-                self.num_workers += stolen_workers
+        plunder_probability = capability / (capability + rival_capability)
+        plunder = random.random()
+        if plunder < plunder_probability:
+            stolen_grain = plunder * household.grain
+            stolen_workers = math.ceil(plunder * household.num_workers)
+            household.grain -= stolen_grain
+            self.grain += stolen_grain
+            household.num_workers -= stolen_workers
+            self.num_workers += stolen_workers
 
     def collaborate(self, household):
-        pass
+        total_workers = self.num_workers + household.num_workers
+        capability = statistics.mean((self.num_workers / total_workers, self.ambition, self.competency))
+        other_capability = statistics.mean((household.num_workers / total_workers, household.ambition, household.competency))
+        collab_probability = capability / (capability + other_capability)
+        collab = random.random()
+        if collab < collab_probability:
+            trade = collab * household.grain
+            worker_efficiency = math.floor(collab * household.num_workers)
+            self.grain += trade
+            self.num_workers += worker_efficiency

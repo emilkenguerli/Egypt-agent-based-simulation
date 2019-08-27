@@ -20,6 +20,7 @@ class Presenter:
         self.columns = households[0].columns
         # Assumes 'columns' attribute is the same for all households.
         self.num_generations = num_generations
+        self.generation = 0
         self.view = View(self)
 
     def statistics(self):
