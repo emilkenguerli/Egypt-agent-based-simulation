@@ -11,16 +11,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-class View():
+class FrameView():
     """Act upon data from the presenter and save data in the relevant format."""
 
     def __init__(self, presenter):
-        """Initialise view attributes upon object instantiation.
+        """Initialise FrameView attributes upon object instantiation.
 
         Keyword arguments:
         presenter           -- presenter object for data retrieval
 
-        The presenter has the view as an attribute and the view has the presenter
+        The presenter has the FrameView as an attribute and the FrameView has the presenter
         as an attribute. This is to facilitate the flow of information between
         these two layers.
         """

@@ -1,8 +1,8 @@
 import pandas as pd
-from gui.view import View
+from gui.frame_view import FrameView
 
 class Presenter:
-    """Retrieve and format data for the View."""
+    """Retrieve and format data for the FrameView."""
 
     def __init__(self, environment, households, num_generations):
         """Initialise presenter attributes upon object instantiation.
@@ -21,7 +21,7 @@ class Presenter:
         # Assumes 'columns' attribute is the same for all households.
         self.num_generations = num_generations
         self.generation = 0
-        self.view = View(self)
+        self.frame_view = FrameView(self)
 
     def statistics(self):
         """Convert and return household list as a pandas dataframe."""
@@ -32,8 +32,8 @@ class Presenter:
         return df
 
     def update(self):
-        """Tell view to save the current state of the simulation as a frame."""
-        self.view.save_frame()
+        """Tell frame view to save the current state of the simulation as a frame."""
+        self.frame_view.save_frame()
 
     def river_map(self):
         """Return river_map numpy array attribute of environment object."""
