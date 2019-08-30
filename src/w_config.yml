@@ -1,5 +1,5 @@
-num_households: 15
-num_generations: 20
+num_households: 5
+num_generations: 10
 
 households:
   num_workers: 15
