@@ -33,11 +33,12 @@ class UserView(tk.Frame):
         view_button.pack(side=tk.RIGHT, padx=4, pady=(5, 20))
 
         self.progress_bar = ttk.Progressbar(self, variable=self.progress_var, orient="horizontal", length=200, mode="determinate")
-        self.progress_bar["maximum"] = self.presenter.num_generations
+        self.progress_bar["maximum"] = self.presenter.get_num_generations()
         self.progress_bar.pack()
 
     def click_run_button(self):
-        exit()
+        self.presenter.start_simulation()
+        self.progress_var.set(self.presenter.get_num_generations())
 
     def click_view_button(self):
         window = tk.Toplevel(self.master)

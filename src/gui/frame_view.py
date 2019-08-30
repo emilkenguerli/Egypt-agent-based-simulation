@@ -56,24 +56,24 @@ class FrameView():
         rgba = self.get_rgba(statistics)
         edges = self.get_edges(statistics, rgba)
         sim_axis = plt.subplot(grid[0:, 0])
-        sim_axis.set_title('Year {0}'.format(self.presenter.generation))
+        sim_axis.set_title('Year {0}'.format(self.presenter.get_generation()))
         sim_axis.scatter(x_pos, y_pos, s=area, color=rgba, edgecolors=edges)
         sim_axis.imshow(display)
 
         self.record_population(statistics)
         graph_1_axis = plt.subplot(grid[0, 1])
         graph_1_axis.set_title('Total Population')
-        graph_1_axis.set_xlim([0, self.presenter.num_generations])
+        graph_1_axis.set_xlim([0, self.presenter.get_num_generations()])
         graph_1_axis.plot(self.pop_df['generation'], self.pop_df['population'])
 
         self.record_gini(statistics)
         graph_2_axis = plt.subplot(grid[1, 1])
         graph_2_axis.set_title('Gini-coefficient')
-        graph_2_axis.set_xlim([0, self.presenter.num_generations])
+        graph_2_axis.set_xlim([0, self.presenter.get_num_generations()])
         graph_2_axis.set_ylim([0, 1])
         graph_2_axis.plot(self.gini_df['generation'], self.gini_df['gini-coefficient'], color=(1,0,0))
 
-        path = self._FRAME_PATH + 'yr_{0}'.format(self.presenter.generation)
+        path = self._FRAME_PATH + 'yr_{0}'.format(self.presenter.get_generation())
         plt.savefig(path)
         plt.close('all')
 
@@ -145,13 +145,13 @@ class FrameView():
         return [to_edges(action, tuple) for action, tuple in zip(interaction, rgba)]
 
     def record_population(self, statistics):
-        generation = self.presenter.generation
+        generation = self.presenter.get_generation()
         population = statistics['num_workers'].sum()
         row = {'generation':generation, 'population': population}
         self.pop_df = self.pop_df.append(row, ignore_index=True)
 
     def record_gini(self, statistics):
-        generation = self.presenter.generation
+        generation = self.presenter.get_generation()
         total_grain = statistics['grain'].sum()
         grain = np.sort(statistics['grain'])
         wealth_prop = grain/total_grain
