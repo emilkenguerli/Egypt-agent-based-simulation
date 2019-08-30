@@ -1,15 +1,19 @@
-from PIL import Image, ImageTk
-import tkinter as tk
 from tkinter import ttk
+import tkinter as tk
 
-class Window(tk.Frame):
-    def __init__(self, master=None):
+from PIL import Image, ImageTk
+
+class UserView(tk.Frame):
+    def __init__(self, presenter, progress_var, master=None):
         tk.Frame.__init__(self, master)
+        self.presenter = presenter
+        self.progress_var = progress_var
         self.master = master
         self.config(background="white")
         self.pack(fill=tk.BOTH, expand=True)
 
         load = Image.open("../../resources/pictures/iris.png")
+        # TODO: change directory to constant attribute.
         load = load.resize((200, 200))
         render = ImageTk.PhotoImage(load)
         img = tk.Label(self, image=render, borderwidth=0)
@@ -28,20 +32,12 @@ class Window(tk.Frame):
         view_button.config(width=15)
         view_button.pack(side=tk.RIGHT, padx=4, pady=(5, 20))
 
-        progress = ttk.Progressbar(self, orient="horizontal", length=200, mode="determinate")
-        progress.pack()
-
+        self.progress_bar = ttk.Progressbar(self, variable=self.progress_var, orient="horizontal", length=200, mode="determinate")
+        self.progress_bar["maximum"] = self.presenter.num_generations
+        self.progress_bar.pack()
 
     def click_run_button(self):
         exit()
 
     def click_view_button(self):
-        exit()
-
-root = tk.Tk()
-app = Window(root)
-root.wm_title("Egypt Simulation")
-root.geometry("250x290")
-root.style = ttk.Style()
-root.style.theme_use("clam")
-root.mainloop()
+        window = tk.Toplevel(self.master)

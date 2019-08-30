@@ -1,4 +1,5 @@
 import math
+from threading import Thread
 import uuid
 
 import matplotlib.image as mpimg
@@ -83,15 +84,15 @@ def interact(households):
         for index_2 in range(index_1 + 1, num_households):
             house_1 = households[index_1]
             house_2 = households[index_2]
+            # FIXME: IndexError: list index out of range
             if intersect(house_1, house_2):
                 interaction(house_1, house_2)
                 if house_1.num_workers <= 0:
                     households.remove(house_1)
                     index_1 -= 1
-                elif house_2.num_workers <= 0:
+                if house_2.num_workers <= 0:
                     households.remove(house_2)
                     index_2 -= 1
-
 
 
 def intersect(house_1, house_2):
@@ -129,4 +130,12 @@ if __name__ == "__main__":
     environment = Environment(river_map, fertility_map, map_shape)
     households = setup_households(environment, write_config, read_config)
     presenter = Presenter(environment, households, num_generations)
-    run_simulation(presenter)
+    # presenter.start_application()
+    # presenter.start()
+
+    sim_thread = Thread(target=run_simulation, args=(presenter,))
+    sim_thread.start()
+    presenter.start_application()
+    sim_thread.join()
+
+    # run_simulation(presenter)
