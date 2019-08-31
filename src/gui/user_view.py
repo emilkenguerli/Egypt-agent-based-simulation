@@ -1,20 +1,22 @@
-from tkinter import ttk
+from threading import Thread
+import time
 import tkinter as tk
+from tkinter import ttk
 
 from PIL import Image, ImageTk
 
 class UserView(tk.Frame):
     def __init__(self, presenter, progress_var, master=None):
         tk.Frame.__init__(self, master)
+        self.PIC_DIR = "../../resources/pictures/"
+        self.FRAME_DIR = "../../resources/frames/"
         self.presenter = presenter
         self.progress_var = progress_var
         self.master = master
         self.config(background="white")
         self.pack(fill=tk.BOTH, expand=True)
 
-        load = Image.open("../../resources/pictures/iris.png")
-        # TODO: change directory to constant attribute.
-        load = load.resize((200, 200))
+        load = Image.open(self.PIC_DIR + "iris.png")
         render = ImageTk.PhotoImage(load)
         img = tk.Label(self, image=render, borderwidth=0)
         img.image = render
@@ -42,3 +44,21 @@ class UserView(tk.Frame):
 
     def click_view_button(self):
         window = tk.Toplevel(self.master)
+        window.wm_title("Egypt Simulation")
+        load = Image.open(self.FRAME_DIR + "yr_0.png")
+        render = ImageTk.PhotoImage(load)
+        img = tk.Label(window, image=render, borderwidth=0)
+        img.image = render
+        img.pack()
+        gen = 1
+        img.after(1000, self.next_gen, img, gen)
+
+    def next_gen(self, img, gen):
+        if(gen < self.presenter.get_num_generations()):
+            load = Image.open(self.FRAME_DIR + "yr_{0}.png".format(gen))
+            render = ImageTk.PhotoImage(load)
+            img.configure(image=render)
+            img.image = render
+            gen += 1
+            img.after(1000, self.next_gen, img, gen)
+            # TODO: change to frames per second constant
