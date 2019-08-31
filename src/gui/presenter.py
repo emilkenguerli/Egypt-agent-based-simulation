@@ -29,11 +29,10 @@ class Presenter:
         # self.sim_thread = Thread(target=self.simulation.run_simulation, args=(self,))
 
     def start_application(self):
-        self.root.wm_title("Egypt Simulation")
-        self.root.geometry("250x290")
+        self.root.wm_title("Egypt Application")
+        self.root.geometry("300x360")
         self.root.style = ttk.Style()
         self.root.style.theme_use("clam")
-        # self.root.after(0, self.progress)
         self.root.mainloop()
 
     def start_simulation(self):
