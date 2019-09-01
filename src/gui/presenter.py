@@ -26,7 +26,6 @@ class Presenter:
         self.root = tk.Tk()
         self.progress_var = tk.IntVar()
         self.user_view = UserView(self, self.progress_var, master=self.root)
-        # self.sim_thread = Thread(target=self.simulation.run_simulation, args=(self,))
 
     def start_application(self):
         self.root.wm_title("Egypt Application")
@@ -35,8 +34,8 @@ class Presenter:
         self.root.style.theme_use("clam")
         self.root.mainloop()
 
-    def start_simulation(self):
-        self.simulation.run_simulation(self)
+    def simulate_year(self):
+        self.simulation.run_year_simulation(self)
 
     def statistics(self):
         """Convert and return household list as a pandas dataframe."""
