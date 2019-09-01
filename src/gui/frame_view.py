@@ -63,13 +63,13 @@ class FrameView():
         self.record_population(statistics)
         graph_1_axis = plt.subplot(grid[0, 1])
         graph_1_axis.set_title('Total Population')
-        graph_1_axis.set_xlim([0, self.presenter.get_num_generations()])
+        graph_1_axis.set_xlim([0, self.presenter.get_num_generations() - 1])
         graph_1_axis.plot(self.pop_df['generation'], self.pop_df['population'])
 
         self.record_gini(statistics)
         graph_2_axis = plt.subplot(grid[1, 1])
         graph_2_axis.set_title('Gini-coefficient')
-        graph_2_axis.set_xlim([0, self.presenter.get_num_generations()])
+        graph_2_axis.set_xlim([0, self.presenter.get_num_generations() - 1])
         graph_2_axis.set_ylim([0, 1])
         graph_2_axis.plot(self.gini_df['generation'], self.gini_df['gini-coefficient'], color=(1,0,0))
 
