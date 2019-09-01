@@ -51,15 +51,14 @@ class Simulation:
             for index_2 in range(index_1 + 1, num_households):
                 house_1 = self.households[index_1]
                 house_2 = self.households[index_2]
-                # FIXME: IndexError: list index out of range
                 if self.intersect(house_1, house_2):
                     self.interaction(house_1, house_2)
                     if house_1.num_workers <= 0:
                         self.households.remove(house_1)
-                        index_1 -= 1
+                        num_households -=1; index_1 -= 1
                     if house_2.num_workers <= 0:
                         self.households.remove(house_2)
-                        index_2 -= 1
+                        num_households -= 1; index_2 -= 1
 
     def intersect(self, house_1, house_2):
         x_1, y_1 = house_1.position
