@@ -18,7 +18,7 @@ class Simulation:
         self.num_generations = num_generations
         self.generation = 0
 
-    def run_simulation(self, presenter):
+    def run_year_simulation(self, presenter):
         """Run the ancient egypt simulation.
 
         Keyword arguments:
@@ -27,10 +27,7 @@ class Simulation:
         All households partake in a set of decisions every generational tick.
         External factors affect both the landscape and its populous.
         """
-
-        while self.generation < self.num_generations:
-            if not self.households:
-                break
+        if self.generation < self.num_generations or self.households:
             presenter.update()
             self.households.sort(key=lambda x: x.grain, reverse=True)
             for house in self.households:
