@@ -35,12 +35,11 @@ class UserView(tk.Frame):
         view_button.pack(side=tk.RIGHT, padx=4, pady=(5, 20))
 
         self.progress_bar = ttk.Progressbar(self, variable=self.progress_var, orient="horizontal", length=200, mode="determinate")
-        self.progress_bar["maximum"] = self.presenter.get_num_generations()
+        self.progress_bar["maximum"] = self.presenter.get_num_generations() - 1
         self.progress_bar.pack()
 
     def click_run_button(self):
-        self.presenter.start_simulation()
-        self.progress_var.set(self.presenter.get_num_generations())
+        self.master.after(0, self.progress)
 
     def click_view_button(self):
         window = tk.Toplevel(self.master)
@@ -51,14 +50,21 @@ class UserView(tk.Frame):
         img.image = render
         img.pack()
         gen = 1
-        img.after(1000, self.next_gen, img, gen)
+        img.after(1000, self.next_year_frame, img, gen)
 
-    def next_gen(self, img, gen):
-        if(gen < self.presenter.get_num_generations()):
+    def progress(self):
+        self.presenter.simulate_year()
+        gen = self.presenter.get_generation()
+        if gen < self.presenter.get_num_generations():
+            self.progress_var.set(self.presenter.get_generation())
+            self.master.after(0, self.progress)
+
+    def next_year_frame(self, img, gen):
+        if gen < self.presenter.get_num_generations():
             load = Image.open(self.FRAME_DIR + "yr_{0}.png".format(gen))
             render = ImageTk.PhotoImage(load)
             img.configure(image=render)
             img.image = render
             gen += 1
-            img.after(1000, self.next_gen, img, gen)
+            img.after(1000, self.next_year_frame, img, gen)
             # TODO: change to frames per second constant
