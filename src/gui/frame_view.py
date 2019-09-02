@@ -1,12 +1,6 @@
-import math
-
 import pandas as pd
-from matplotlib.animation import FuncAnimation
-from matplotlib.animation import ArtistAnimation
-from matplotlib.backends.backend_agg import FigureCanvasAgg
 import matplotlib.cm as mcm
 import matplotlib.colors as mcolors
-import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -71,8 +65,7 @@ class FrameView():
         graph_2_axis.set_title('Gini-coefficient')
         graph_2_axis.set_xlim([0, self.presenter.get_num_generations() - 1])
         graph_2_axis.set_ylim([0, 1])
-        graph_2_axis.plot(self.gini_df['generation'], self.gini_df['gini-coefficient'], color=(1,0,0))
-
+        graph_2_axis.plot(self.gini_df['generation'], self.gini_df['gini-coefficient'], color=(1, 0, 0))
         path = self._FRAME_PATH + 'yr_{0}'.format(self.presenter.get_generation())
         plt.savefig(path)
         plt.close('all')
@@ -130,7 +123,7 @@ class FrameView():
         grain_per_worker = grain/num_workers
         gpw_min, gpw_max = grain_per_worker.min(), grain_per_worker.max()
         alpha = np.interp(grain_per_worker, (gpw_min, gpw_max), (0.2, 1.0))
-        rgba[:,-1] = alpha
+        rgba[:, -1] = alpha
         return rgba
 
     def get_edges(self, statistics, rgba):
