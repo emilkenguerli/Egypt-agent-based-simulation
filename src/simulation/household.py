@@ -11,7 +11,7 @@ class Household:
     autonomous agent in the ABMS (Agent-based Model Simulation).
     """
 
-    def __init__(self, model, id, num_workers, grain, min_competency,
+    def __init__(self, model, id, num_workers, grain, worker_capability, min_competency,
                         min_ambition, rconfig, env):
         """Initialise household attributes upon object instantiation.
 
@@ -32,22 +32,23 @@ class Household:
         self.KNOWLEDGE_RATIO = rconfig['knowledge_ratio'] # In pixels.
         self.CLAIM_RATIO = rconfig['claim_ratio']
         self.MAX_POTENTIAL_YIELD = rconfig['maximum_potential_yield']
-        self.WORKER_CAPABILITY = rconfig['worker_capability']
         self.WORKER_APPETITE = rconfig['worker_appetite']
         self.GROWTH_RATE = rconfig['growth_rate']
-        self.GENERATIONAL_VARIANCE = rconfig['generational_variance']
+        self.GENERATIONAL_VAR = rconfig['generational_variance']
+        self.CAPABILITY_VAR = rconfig['capability_variance']
 
         self.model = model
         self.id = id
         self.num_workers = num_workers
         self.grain = grain
+        self.worker_capability = worker_capability
         self.fields_owned = 0
         self.interaction = 0
         self.competency = model.generate_competency(min_competency)
         self.ambition = model.generate_ambition(min_ambition)
         self.position = model.generate_position(env)
 
-        self.columns = ['id', 'num_workers', 'grain', 'fields_owned', 'interaction',
+        self.columns = ['id', 'num_workers', 'grain', 'worker_capability', 'interaction',
                     'competency', 'ambition']
 
     @property
@@ -87,7 +88,7 @@ class Household:
 
         field = fertility * self.MAX_POTENTIAL_YIELD
         available_harvest = field.sum()
-        workers_capability = self.num_workers * self.WORKER_CAPABILITY
+        workers_capability = self.num_workers * self.worker_capability
         potential_harvest = min(available_harvest, workers_capability)
         harvest = potential_harvest * self.competency
         if available_harvest:
@@ -137,16 +138,12 @@ class Household:
             self.num_workers += stolen_workers
 
     def collaborate(self, household):
-        total_workers = self.num_workers + household.num_workers
-        capability = statistics.mean((self.num_workers / total_workers, self.ambition, self.competency))
-        other_capability = statistics.mean((household.num_workers / total_workers, household.ambition, household.competency))
-        collab_probability = capability / (capability + other_capability)
-        collab = random.random()
-        if collab < collab_probability:
-            trade = collab * household.grain
-            worker_efficiency = math.floor(collab * household.num_workers)
-            self.grain += trade
-            self.num_workers += worker_efficiency
+        total_capability = self.worker_capability + household.worker_capability
+        percentage_of_capability = self.worker_capability/total_capability
+        abs_diff = abs(self.worker_capability - household.worker_capability)
+        gain = (1 - percentage_of_capability) * abs_diff * random.random()
+        self.worker_capability += gain
+
 
     def generational_changeover(self):
         self.competency += self.attribute_change(self.competency)
@@ -154,9 +151,13 @@ class Household:
         assert(self.competency > 0 and self.competency < 1)
         assert(self.ambition > 0 and self.ambition < 1)
 
+        perc_change = random.uniform(-self.CAPABILITY_VAR, self.CAPABILITY_VAR)
+        self.worker_capability += self.worker_capability * perc_change
+
 
     def attribute_change(self, attr_value):
-        variance = random.uniform(0, self.GENERATIONAL_VARIANCE)
+        variance = self.GENERATIONAL_VAR
+        variance = random.uniform(0, variance)
         inc_chance = random.random()
         if inc_chance >= 0.5:
             return (1 - attr_value) * variance

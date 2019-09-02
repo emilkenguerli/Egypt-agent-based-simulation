@@ -18,8 +18,8 @@ class Environment:
         self.flood_map = np.copy(fertility_map)
         self.shape = shape
 
-    def flood(self):
+    def flood(self, generation):
         flood_freq = self.FLOOD_FREQ
-        if self.FLOOD_FREQ and self.generation % self.FLOOD_FREQ == 0:
+        if self.FLOOD_FREQ and generation % self.FLOOD_FREQ == 0:
             self.fertility_map = self.flood_map
             self.flood_map = np.copy(self.fertility_map)
