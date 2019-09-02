@@ -44,7 +44,7 @@ class Simulation:
                 house.generational_changeover()
                 house.relocate(self.environment)
 
-            self.environment.flood()
+            self.environment.flood(self.generation)
             self.generation += 1
 
     def interact(self):
@@ -115,9 +115,10 @@ def setup_households(env, w_config, r_config):
         household_config = w_config['households']
         num_workers = household_config['num_workers']
         grain = household_config['grain']
+        worker_capability = household_config['worker_capability']
         min_competency = household_config['min_competency']
         min_ambition = household_config['min_ambition']
-        household = Household(model, id, num_workers, grain, min_competency,
+        household = Household(model, id, num_workers, grain, worker_capability, min_competency,
                     min_ambition, r_config, env)
         households.append(household)
     return households

@@ -1,10 +1,10 @@
 pixel_to_km: 2.3109 # DO NOT CHANGE!!!
 knowledge_ratio: 1.15545   # 0.5 km  per individual (~population density) -specified in pixels
 claim_ratio: 20 # specified in pixels (4 workers per pixel)
-worker_capability: 1000
 worker_appetite: 100
-maximum_potential_yield: 4000
+maximum_potential_yield: 400
 growth_rate: 0.02
+capability_variance: 0.05
 generational_variance: 0.5
 flood_frequency: 0
 
