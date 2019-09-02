@@ -106,33 +106,33 @@ def setup_map(map_file):
     return np_map, shape
 
 
-def setup_households(env, w_config, r_config):
+def setup_households(env, var_config, const_config):
     """Create and return a list of household objects."""
     households = []
-    for _ in range(w_config['num_households']):
+    for _ in range(var_config['num_households']):
         model = AgentModel()
         id = uuid.uuid1()
-        household_config = w_config['households']
+        household_config = var_config['households']
         num_workers = household_config['num_workers']
         grain = household_config['grain']
         worker_capability = household_config['worker_capability']
         min_competency = household_config['min_competency']
         min_ambition = household_config['min_ambition']
         household = Household(model, id, num_workers, grain, worker_capability, min_competency,
-                    min_ambition, r_config, env)
+                    min_ambition, const_config, env)
         households.append(household)
     return households
 
 
 if __name__ == "__main__":
-    write_config = load_config('../w_config.yml')
-    read_config = load_config('../r_config.yml')
+    var_config = load_config('../var_config.yml')
+    const_config = load_config('../const_config.yml')
     river_map, map_shape = setup_map('../../resources/maps/river_map.png')
     fertility_map, map_shape = setup_map('../../resources/maps/fertility_map.png')
 
-    num_generations = write_config['num_generations']
-    environment = Environment(river_map, fertility_map, map_shape, read_config)
-    households = setup_households(environment, write_config, read_config)
+    num_generations = var_config['num_generations']
+    environment = Environment(river_map, fertility_map, map_shape, const_config)
+    households = setup_households(environment, var_config, const_config)
     simulation = Simulation(households, environment, num_generations)
     presenter = Presenter(simulation)
 
