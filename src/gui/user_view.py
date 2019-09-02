@@ -39,7 +39,7 @@ class UserView(tk.Frame):
         self.progress_bar.pack()
 
     def click_run_button(self):
-        self.master.after(0, self.progress)
+        self.master.after(5, self.progress)
 
     def click_view_button(self):
         window = tk.Toplevel(self.master)
@@ -57,7 +57,7 @@ class UserView(tk.Frame):
         gen = self.presenter.get_generation()
         if gen < self.presenter.get_num_generations():
             self.progress_var.set(self.presenter.get_generation())
-            self.master.after(0, self.progress)
+            self.master.after(5, self.progress)
 
     def next_year_frame(self, img, gen):
         if gen < self.presenter.get_num_generations():

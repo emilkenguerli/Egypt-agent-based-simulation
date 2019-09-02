@@ -154,7 +154,7 @@ class FrameView():
         generation = self.presenter.get_generation()
         total_grain = statistics['grain'].sum()
         grain = np.sort(statistics['grain'])
-        wealth_prop = grain/total_grain
+        wealth_prop = grain/total_grain if total_grain else grain * 0
         num_households = len(statistics)
         pop_prop = np.ones(num_households)/num_households
         richer_prop = np.linspace(num_households - 1, 0, num=num_households)/num_households
