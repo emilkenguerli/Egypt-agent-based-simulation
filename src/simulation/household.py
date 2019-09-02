@@ -12,7 +12,7 @@ class Household:
     """
 
     def __init__(self, model, id, num_workers, grain, worker_capability, min_competency,
-                        min_ambition, rconfig, env):
+                        min_ambition, const_config, env):
         """Initialise household attributes upon object instantiation.
 
         Keyword arguments:
@@ -29,13 +29,14 @@ class Household:
         Set of attributes defines the state of the household at a specific point in
         time (generation).
         """
-        self.KNOWLEDGE_RATIO = rconfig['knowledge_ratio'] # In pixels.
-        self.CLAIM_RATIO = rconfig['claim_ratio']
-        self.MAX_POTENTIAL_YIELD = rconfig['maximum_potential_yield']
-        self.WORKER_APPETITE = rconfig['worker_appetite']
-        self.GROWTH_RATE = rconfig['growth_rate']
-        self.GENERATIONAL_VAR = rconfig['generational_variance']
-        self.CAPABILITY_VAR = rconfig['capability_variance']
+        self.KNOWLEDGE_RATIO = const_config['knowledge_ratio'] # In pixels.
+        self.CLAIM_RATIO = const_config['claim_ratio']
+        self.MAX_POTENTIAL_YIELD = const_config['maximum_potential_yield']
+        self.WORKER_APPETITE = const_config['worker_appetite']
+        self.GROWTH_RATE = const_config['growth_rate']
+        self.GENERATIONAL_VAR = const_config['generational_variance']
+        self.CAPABILITY_VAR = const_config['capability_variance']
+        self.SURVIVAL_PROBABILITY = const_config['survival_probability']
 
         self.model = model
         self.id = id
@@ -103,7 +104,7 @@ class Household:
         if(self.grain < 0):
             resiliency = self.competency * self.ambition
             negative_workers = (self.grain / self.WORKER_APPETITE) * (1 - resiliency)
-            self.num_workers += math.floor(negative_workers)
+            self.num_workers += math.floor(negative_workers * self.SURVIVAL_PROBABILITY)
             self.grain = 0
 
     def grow(self):
@@ -131,11 +132,11 @@ class Household:
         plunder = random.random()
         if plunder < plunder_probability:
             stolen_grain = plunder * household.grain
-            stolen_workers = math.ceil(plunder * household.num_workers)
+            stolen_workers = math.floor(plunder * household.num_workers)
             household.grain -= stolen_grain
             self.grain += stolen_grain
             household.num_workers -= stolen_workers
-            self.num_workers += stolen_workers
+            self.num_workers += stolen_workers * self.SURVIVAL_PROBABILITY
 
     def collaborate(self, household):
         total_capability = self.worker_capability + household.worker_capability
@@ -153,7 +154,6 @@ class Household:
 
         perc_change = random.uniform(-self.CAPABILITY_VAR, self.CAPABILITY_VAR)
         self.worker_capability += self.worker_capability * perc_change
-
 
     def attribute_change(self, attr_value):
         variance = self.GENERATIONAL_VAR
