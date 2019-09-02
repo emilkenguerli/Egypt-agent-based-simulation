@@ -3,9 +3,10 @@ knowledge_ratio: 1.15545   # 0.5 km  per individual (~population density) -speci
 claim_ratio: 20 # specified in pixels (4 workers per pixel)
 worker_appetite: 100
 maximum_potential_yield: 400
-growth_rate: 0.02
+growth_rate: 0.01
 capability_variance: 0.05
 generational_variance: 0.5
 flood_frequency: 0
+survival_probability: 0.5
 
 # Farming inefficiencies remain constant as size of community increases
