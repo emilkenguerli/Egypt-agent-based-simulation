@@ -2,6 +2,7 @@ import math
 import random
 import statistics
 
+import sys
 
 class Household:
     """Represent communities or households in the neolithic era of ancient Egypt"
@@ -10,7 +11,7 @@ class Household:
     autonomous agent in the ABMS (Agent-based Model Simulation).
     """
 
-    def __init__(self, model, id, num_workers, grain, generation_countdown, min_competency,
+    def __init__(self, model, id, num_workers, grain, min_competency,
                         min_ambition, rconfig, env):
         """Initialise household attributes upon object instantiation.
 
@@ -34,6 +35,7 @@ class Household:
         self.WORKER_CAPABILITY = rconfig['worker_capability']
         self.WORKER_APPETITE = rconfig['worker_appetite']
         self.GROWTH_RATE = rconfig['growth_rate']
+        self.GENERATIONAL_VARIANCE = rconfig['generational_variance']
 
         self.model = model
         self.id = id
@@ -41,13 +43,12 @@ class Household:
         self.grain = grain
         self.fields_owned = 0
         self.interaction = 0
-        self.generation_countdown = generation_countdown
         self.competency = model.generate_competency(min_competency)
         self.ambition = model.generate_ambition(min_ambition)
         self.position = model.generate_position(env)
 
         self.columns = ['id', 'num_workers', 'grain', 'fields_owned', 'interaction',
-                    'generation_countdown', 'competency', 'ambition']
+                    'competency', 'ambition']
 
     @property
     def knowledge_radius(self):
@@ -88,7 +89,12 @@ class Household:
         available_harvest = field.sum()
         workers_capability = self.num_workers * self.WORKER_CAPABILITY
         potential_harvest = min(available_harvest, workers_capability)
-        self.grain = self.grain + potential_harvest * self.competency
+        harvest = potential_harvest * self.competency
+        if available_harvest:
+            percentage_unharvested = (available_harvest - harvest) / available_harvest
+            fertility = fertility * percentage_unharvested
+            environment.fertility_map[y_start:y_end, x_start:x_end] = fertility
+        self.grain = self.grain + harvest
 
     def consume_grain(self):
         """Not implemented."""
@@ -141,3 +147,18 @@ class Household:
             worker_efficiency = math.floor(collab * household.num_workers)
             self.grain += trade
             self.num_workers += worker_efficiency
+
+    def generational_changeover(self):
+        self.competency += self.attribute_change(self.competency)
+        self.ambition += self.attribute_change(self.ambition)
+        assert(self.competency > 0 and self.competency < 1)
+        assert(self.ambition > 0 and self.ambition < 1)
+
+
+    def attribute_change(self, attr_value):
+        variance = random.uniform(0, self.GENERATIONAL_VARIANCE)
+        inc_chance = random.random()
+        if inc_chance >= 0.5:
+            return (1 - attr_value) * variance
+        else:
+            return 0 - (attr_value - 0) * variance

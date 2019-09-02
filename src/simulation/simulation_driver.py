@@ -35,27 +35,31 @@ class Simulation:
                 claimed_field = house.claim_field(self.environment)
                 house.farm(claimed_field, self.environment)
                 house.consume_grain()
-                if(house.num_workers <= 0):
+                if house.num_workers <= 0:
                     self.households.remove(house)
-                house.grow()
-                house.relocate(self.environment)
+
             self.interact()
+            for house in self.households:
+                house.grow()
+                house.generational_changeover()
+                house.relocate(self.environment)
+
+            self.environment.flood()
             self.generation += 1
 
     def interact(self):
-        num_households = len(self.households)
-        for index_1 in range(num_households):
-            for index_2 in range(index_1 + 1, num_households):
+        remaining = []
+        for index_1 in range(len(self.households)):
+            for index_2 in range(index_1, len(self.households)):
                 house_1 = self.households[index_1]
                 house_2 = self.households[index_2]
-                if self.intersect(house_1, house_2):
+                if house_1.id is house_2.id:
+                    continue
+                if house_1.num_workers > 0 and house_2.num_workers > 0 and self.intersect(house_1, house_2):
                     self.interaction(house_1, house_2)
-                    if house_1.num_workers <= 0:
-                        self.households.remove(house_1)
-                        num_households -=1; index_1 -= 1
-                    if house_2.num_workers <= 0:
-                        self.households.remove(house_2)
-                        num_households -= 1; index_2 -= 1
+            if house_1.num_workers > 0:
+                remaining.append(house_1)
+        self.households = remaining
 
     def intersect(self, house_1, house_2):
         x_1, y_1 = house_1.position
@@ -111,11 +115,10 @@ def setup_households(env, w_config, r_config):
         household_config = w_config['households']
         num_workers = household_config['num_workers']
         grain = household_config['grain']
-        generation_countdown = household_config['generation_countdown']
         min_competency = household_config['min_competency']
         min_ambition = household_config['min_ambition']
-        household = Household(model, id, num_workers, grain, generation_countdown,
-        min_competency, min_ambition, r_config, env)
+        household = Household(model, id, num_workers, grain, min_competency,
+                    min_ambition, r_config, env)
         households.append(household)
     return households
 
@@ -127,13 +130,9 @@ if __name__ == "__main__":
     fertility_map, map_shape = setup_map('../../resources/maps/fertility_map.png')
 
     num_generations = write_config['num_generations']
-    environment = Environment(river_map, fertility_map, map_shape)
+    environment = Environment(river_map, fertility_map, map_shape, read_config)
     households = setup_households(environment, write_config, read_config)
     simulation = Simulation(households, environment, num_generations)
     presenter = Presenter(simulation)
 
     presenter.start_application()
-
-
-
-    # run_simulation(presenter)
