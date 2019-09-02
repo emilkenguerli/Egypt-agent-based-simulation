@@ -1,8 +1,9 @@
 num_households: 15
-num_generations: 20
+num_generations: 100
 
 households:
   num_workers: 15
   grain: 3000
+  worker_capability: 1000
   min_competency: 0.2
   min_ambition: 0.2
