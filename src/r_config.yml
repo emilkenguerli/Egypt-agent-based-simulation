@@ -1,9 +1,11 @@
 pixel_to_km: 2.3109 # DO NOT CHANGE!!!
 knowledge_ratio: 1.15545   # 0.5 km  per individual (~population density) -specified in pixels
-claim_ratio: 4 # specified in pixels (4 workers per pixel)
-worker_capability: 260
+claim_ratio: 20 # specified in pixels (4 workers per pixel)
+worker_capability: 1000
 worker_appetite: 100
-maximum_potential_yield: 40000
+maximum_potential_yield: 4000
 growth_rate: 0.02
+generational_variance: 0.5
+flood_frequency: 0
 
 # Farming inefficiencies remain constant as size of community increases
