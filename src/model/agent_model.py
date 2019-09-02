@@ -14,10 +14,6 @@ class AgentModel(AbstractModel):
 
     Contains methods that represent decision-making of higher complexity."""
 
-    def __init__(self):
-        """Not implemented."""
-        pass
-
     def generate_competency(self, min_competency):
         """Extend superclass method."""
         return super().generate_competency(min_competency)

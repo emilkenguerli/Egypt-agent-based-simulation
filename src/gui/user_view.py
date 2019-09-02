@@ -1,5 +1,3 @@
-from threading import Thread
-import time
 import tkinter as tk
 from tkinter import ttk
 
@@ -10,6 +8,7 @@ class UserView(tk.Frame):
         tk.Frame.__init__(self, master)
         self.PIC_DIR = "../../resources/pictures/"
         self.FRAME_DIR = "../../resources/frames/"
+        self.SEC_PER_FRAME = 1000
         self.presenter = presenter
         self.progress_var = progress_var
         self.master = master
@@ -50,7 +49,7 @@ class UserView(tk.Frame):
         img.image = render
         img.pack()
         gen = 1
-        img.after(1000, self.next_year_frame, img, gen)
+        img.after(self.SEC_PER_FRAME, self.next_year_frame, img, gen)
 
     def progress(self):
         self.presenter.simulate_year()
@@ -66,5 +65,4 @@ class UserView(tk.Frame):
             img.configure(image=render)
             img.image = render
             gen += 1
-            img.after(1000, self.next_year_frame, img, gen)
-            # TODO: change to frames per second constant
+            img.after(self.SEC_PER_FRAME, self.next_year_frame, img, gen)

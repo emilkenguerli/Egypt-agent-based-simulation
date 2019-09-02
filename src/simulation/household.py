@@ -2,8 +2,6 @@ import math
 import random
 import statistics
 
-import sys
-
 class Household:
     """Represent communities or households in the neolithic era of ancient Egypt"
 
@@ -101,7 +99,7 @@ class Household:
     def consume_grain(self):
         """Not implemented."""
         self.grain = self.grain - self.num_workers * self.WORKER_APPETITE
-        if(self.grain < 0):
+        if self.grain < 0:
             resiliency = self.competency * self.ambition
             negative_workers = (self.grain / self.WORKER_APPETITE) * (1 - resiliency)
             self.num_workers += math.floor(negative_workers * self.SURVIVAL_PROBABILITY)
@@ -111,7 +109,7 @@ class Household:
         increase = self.num_workers * self.GROWTH_RATE
         new_workers = math.floor(increase)
         fraction = increase - new_workers
-        if(random.random() < fraction):
+        if random.random() < fraction:
             new_workers += 1
         self.num_workers += new_workers
 

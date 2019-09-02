@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 import random
 
-# TODO: the model should have a memory of all previous decisions
-# as well as current stats associated with household.
 
 class AbstractModel(ABC):
     """Interface describes household decision-making.
@@ -18,10 +16,6 @@ class AbstractModel(ABC):
     Implementation of abstract methods is unsophistacated. A derived class
     can either override or extend the functionality provided by this class.
     """
-
-    def __init__(self):
-        """Not yet implemented."""
-        pass
 
     @abstractmethod
     def generate_competency(self, min_competency):
@@ -46,7 +40,6 @@ class AbstractModel(ABC):
         x_pos, y_pos = current_position
         x_field = x_pos + int(random.uniform(0, knowledge_radius))
         y_field = y_pos + int(random.uniform(0, knowledge_radius))
-        # TODO: Create helper function that returns border if over border.
         return (x_field, y_field)
 
     @abstractmethod

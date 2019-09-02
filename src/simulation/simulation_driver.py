@@ -1,5 +1,4 @@
 import math
-from threading import Thread
 import uuid
 
 import matplotlib.image as mpimg
@@ -68,10 +67,7 @@ class Simulation:
         distance = math.sqrt(square_dist)
         r_1 = house_1.knowledge_radius
         r_2 = house_2.knowledge_radius
-        if(distance <= (r_1 + r_2)):
-            return True
-        else:
-            return False
+        return distance <= (r_1 + r_2)
 
     def interaction(self, house_1, house_2):
         action_1 = house_1.strategy(house_2)
