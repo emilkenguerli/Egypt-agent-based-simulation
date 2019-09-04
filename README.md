@@ -1,13 +1,6 @@
-top-left to bottom-right
-312km
-721px
+CONFIGURE PROJECT
+export PYTHONPATH=/your/path/to/src
+pip install -r requirements.txt
 
-Therefore,
-2.3109px : 1km
-
-Juhaynah -> Daraw
-290km = 670.161px
-
-8hrs continuous walking about 40km
-knowledge_ratio: 2.5km per individual (30 min walk)
-to carry grain to and from household
+RUN THE APPLICATION
+python simulation_driver.py
