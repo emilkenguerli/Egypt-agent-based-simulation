@@ -6,17 +6,22 @@ import numpy as np
 
 
 class FrameView():
-    """Act upon data from the presenter and save data in the relevant format."""
+    """Acts upon data from the presenter and saves data in the relevant format.
+
+    Attributes:
+        presenter: Presenter singleton object.
+        pop_df: pandas DataFrame containing population statistics for every year
+            of the simulation.
+        gini_df: pandas DataFrame containing gini-coefficient statistics for
+            every year of the simulation.
+    """
 
     def __init__(self, presenter):
         """Initialise FrameView attributes upon object instantiation.
 
-        Keyword arguments:
-        presenter           -- presenter object for data retrieval
-
-        The presenter has the FrameView as an attribute and the FrameView has the presenter
-        as an attribute. This is to facilitate the flow of information between
-        these two layers.
+        The presenter has the FrameView as an attribute and the FrameView has
+        the presenter as an attribute. This is to facilitate the flow of
+        information between these two layers.
         """
         self._FRAME_PATH = '../../resources/frames/'
         self._RIVER_BLUE = (102, 178, 255)
@@ -31,7 +36,7 @@ class FrameView():
         """Save household and landscape information as a frame.
 
         The relevant information is plotted as a matplotlib figure which is then
-        saved as a .png file under the resources/frames folder.
+        saved as a png file under the resources/frames folder.
         """
         statistics = self.presenter.statistics()
         river_map = self.presenter.river_map()
@@ -65,15 +70,16 @@ class FrameView():
         graph_2_axis.set_title('Gini-coefficient')
         graph_2_axis.set_xlim([0, self.presenter.get_num_generations() - 1])
         graph_2_axis.set_ylim([0, 1])
-        graph_2_axis.plot(self.gini_df['generation'], self.gini_df['gini-coefficient'], color=(1, 0, 0))
+        graph_2_axis.plot(self.gini_df['generation'], self.gini_df['gini-coefficient'],
+                          color=(1, 0, 0))
         path = self._FRAME_PATH + 'yr_{0}'.format(self.presenter.get_generation())
         plt.savefig(path)
         plt.close('all')
 
     def river_img(self, river_map):
-        """Convert river_map into river_img and return as numpy array.
+        """Converts river_map into river_img and returns as numpy.ndarray.
 
-        Changing grayscale format to rgb format. River pixels will be mapped to
+        Changes grayscale format to rgb format. River pixels will be mapped to
         blue otherwise black.
         """
         river_list = list(river_map)
@@ -82,7 +88,7 @@ class FrameView():
         return np.array(river_list)
 
     def fertility_img(self, fertility_map):
-        """Convert fertility_map into fertility_img and return as numpy array.
+        """Converts fertility_map into fertility_img and returns as numpy.ndarray.
 
         Changing grayscale format to rgb format. Fertility pixels will be mapped
         to a shade of green otherwise white.
@@ -96,20 +102,21 @@ class FrameView():
         return np.array(fertility_list)
 
     def get_pos(self, statistics):
-        """Return position tuple from household statistics."""
+        """Retrieves and returns household positions from household statistics."""
         x_pos, y_pos = statistics['x_pos'], statistics['y_pos']
         return (x_pos, y_pos)
 
     def get_area(self, statistics):
-        """Return area of the marker to be plotted on the scatter figure."""
+        """Retrieves and returns areas of markers to be plotted on the scatter plot."""
         knowledge_radius = statistics['knowledge_radius']
         return knowledge_radius**2
 
     def get_rgba(self, statistics):
-        """Return numpy array rgba pixels values for all the household.
+        """Returns numpy.ndarray of rgba pixels values for all the household.
 
-        Color (rgb channel)         -- determined by propensity to ambition or competency
-        Opaqueness (alpha channel)  -- determined by grain per worker
+        Color (rgb channel) determined by propensity to ambition or competency.
+        Opaqueness (alpha channel) determined by grain per worker relative to
+        other households.
         """
         num_workers = statistics['num_workers']
         grain = statistics['grain']
@@ -127,23 +134,32 @@ class FrameView():
         return rgba
 
     def get_edges(self, statistics, rgba):
+        """Convert edges of households to red, blue or its rgba value based on
+        whether the household is interacting with another household or not.
+
+        Blue signifies an attempt to collaborate. Red signifies an attempt to
+        plunder. If an edge is neither red or blue, it is the household marker's
+        rgba colour, signifying indifference.
+        """
         interaction = statistics['interaction']
-        def to_edges(action, tuple):
+        def to_edges(action, col_tuple):
             if action < 0:
                 return (1, 0, 0)
             elif action > 0:
                 return (0, 0, 1)
             else:
-                return tuple
-        return [to_edges(action, tuple) for action, tuple in zip(interaction, rgba)]
+                return col_tuple
+        return [to_edges(action, col_tuple) for action, col_tuple in zip(interaction, rgba)]
 
     def record_population(self, statistics):
+        """Generates and updates population statistic."""
         generation = self.presenter.get_generation()
         population = statistics['num_workers'].sum()
         row = {'generation':generation, 'population': population}
         self.pop_df = self.pop_df.append(row, ignore_index=True)
 
     def record_gini(self, statistics):
+        """Generates and updates gini-coefficient statistic."""
         generation = self.presenter.get_generation()
         total_grain = statistics['grain'].sum()
         grain = np.sort(statistics['grain'])
