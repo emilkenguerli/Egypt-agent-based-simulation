@@ -8,6 +8,6 @@ capability_variance: 0.05
 generational_variance: 0.5
 flood_frequency: 0
 survival_probability: 0.5
-num_generations: 20
+num_generations: 100
 
 # Farming inefficiencies remain constant as size of community increases

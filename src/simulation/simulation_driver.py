@@ -63,7 +63,6 @@ class Simulation:
                 to and from the relevant views.
         """
         if self.generation < self.num_generations or self.households:
-            presenter.update()
             self.households.sort(key=lambda x: x.grain, reverse=True)
             for house in self.households:
                 house.interaction = 0
@@ -74,6 +73,7 @@ class Simulation:
                     self.households.remove(house)
 
             self.interact()
+            presenter.update()
             for house in self.households:
                 house.grow()
                 house.generational_changeover()
