@@ -1,19 +1,18 @@
 CONFIGURE PROJECT
 1. pip install virtualenv
 2. mkdir venv
-3. cd venv
-4. cd venv/Scripts
-5. source activate      <!-- Linux -->
+3. virtualenv venv
+6. cd venv/Scripts
+7. source activate      <!-- Linux -->
    activate             <!-- Windows -->
-6. cd path/to/egypt-simulation
-7. pip install -r requirements.txt
-8. deactivate
+8. cd path/to/egypt-simulation
+9. pip install -r requirements.txt
+10. deactivate
 
 RUNNING THE PROGRAM
 1. cd path/to/venv/Scripts
 2. source activate      <!-- Linux -->
    activate             <!-- Windows -->
-3. cd path/to/egypt-simulation
 4. export PYTHONPATH=path/to/egypt-simulation/src       <!-- Linux -->
    set PYTHONPATH=path/to/egypt-simulation/src          <!-- Windows -->
 5. cd path/to/egypt-simulation/src/simulation
@@ -22,3 +21,5 @@ RUNNING THE PROGRAM
 
 NOTE
 * When specifying path directories in Windows use a \ instead of a /
+* You can also set up a virtual environment using the command 'python -m venv env'
+* You don't need to set up a virtual environment if you don't want to.
