@@ -2,9 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import time
 import yaml
-import logging
 from ruamel.yaml import YAML
-from logging.config import fileConfig
 
 from PIL import Image, ImageTk
 
@@ -33,7 +31,6 @@ class UserView(tk.Frame):
         self.config(background="white")
         self.pack(fill=tk.BOTH, expand=True)
         self.buttons = []
-        self.myLogger = logging.getLogger('Admin_Client')
 
         with open("../var_config.yml") as f:
             self.var_config = yaml.load(f)
@@ -88,7 +85,6 @@ class UserView(tk.Frame):
         self.buttons[1].config(state='normal')
         self.buttons[2].config(state='disabled')
         self.start = time.time()
-        self.myLogger.info('Running Simulation')
         self.master.after(5, self.progress)
 
     def click_config_button(self):
@@ -101,7 +97,6 @@ class UserView(tk.Frame):
         simulation from being started before changes are saved.
 
         """
-        self.myLogger.info('Configuring')
         self.buttons[0].config(state='disabled')
         self.window = tk.Toplevel(self.master)
         self.window.wm_title("Configuration")
@@ -197,25 +192,21 @@ class UserView(tk.Frame):
         img.image = render
         img.pack()
         gen = 1
-        self.myLogger.info("View at year" + str(gen))
         img.after(self.SEC_PER_FRAME, self.next_year_frame, img, gen)
 
     def progress(self):
         """Continuously simulates a year and updates the progress variable."""
         self.presenter.simulate_year()
         gen = self.presenter.get_generation()
-        self.myLogger.info('Progress at year ' + str(gen))
         if gen < self.presenter.get_num_generations():
             self.progress_var.set(self.presenter.get_generation())
             self.master.after(5, self.progress)
         if gen == self.presenter.get_num_generations():
-            self.myLogger.info('Finished')
             end = time.time()
             print("Finished	in %.3f seconds" % (end - self.start))
 
     def next_year_frame(self, img, gen):
         """Continuously loads and presents frames to the pop-up window."""
-        self.myLogger.info("View at year" + str(gen))
         if gen < self.presenter.get_num_generations():
             load = Image.open(self.FRAME_DIR + "yr_{0}.png".format(gen))
             render = ImageTk.PhotoImage(load)
