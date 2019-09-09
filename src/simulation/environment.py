@@ -1,4 +1,6 @@
 import numpy as np
+import logging
+from logging.config import fileConfig
 
 class Environment:
     """Represents the simulation landscape (the Nile River).
@@ -32,6 +34,9 @@ class Environment:
         self.fertility_map = fertility_map
         self.flood_map = np.copy(fertility_map)
         self.shape = shape
+
+        self.myLogger = logging.getLogger('Admin_Client')
+        self.myLogger.info('Setting up environment')
 
     def flood(self, generation):
         """Resets the fertility_map to its original fertility values."""
