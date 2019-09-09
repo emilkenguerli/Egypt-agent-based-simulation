@@ -10,9 +10,9 @@ import uuid
 import matplotlib.image as mpimg
 import yaml
 
-from environment import Environment
+from simulation.environment import Environment
 from gui.presenter import Presenter
-from household import Household
+from simulation.household import Household
 from model.agent_model import AgentModel
 
 
