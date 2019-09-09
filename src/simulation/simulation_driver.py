@@ -3,9 +3,13 @@
 Prior to the start of the simulation, the relevant start parameters are read in
 and objects initialised.
 """
-
+import logging
 import math
 import uuid
+import time
+import cProfile
+import pstats
+import io
 
 import matplotlib.image as mpimg
 import yaml
@@ -14,6 +18,7 @@ from simulation.environment import Environment
 from gui.presenter import Presenter
 from simulation.household import Household
 from model.agent_model import AgentModel
+from logging.config import fileConfig
 
 
 class Simulation:
@@ -157,7 +162,7 @@ def load_config(config_file):
             print(exc)
 
 
-def setup_map(map_file):
+def setup_map(map_file, myLogger):
     """Reads and returns a numpy array its shape from a picture file.
 
     Args:
@@ -169,6 +174,8 @@ def setup_map(map_file):
         supplied images are grayscale and, hence, the pixel values will be
         between 0.0 and 1.0.
     """
+
+    myLogger.info('Reading in map image into a numy array')
     np_map = mpimg.imread(map_file)
     shape = np_map.shape
     return np_map, shape
@@ -201,12 +208,34 @@ def setup_households(env, var_config, const_config):
         households.append(household)
     return households
 
+def load_config(config_file, myLogger):
+    """Loads and returns the global configuration dictionary.
 
-if __name__ == "__main__":
-    var_config = load_config('../var_config.yml')
-    const_config = load_config('../const_config.yml')
-    river_map, map_shape = setup_map('../../resources/maps/river_map.png')
-    fertility_map, map_shape = setup_map('../../resources/maps/fertility_map.png')
+    Args:
+        config_file: Path to a yaml configuration file.
+
+    Returns:
+        A dictionary where the keys are simulation parameters and the
+        corresponding values are user-specified inputs to the simulation.
+    """
+    with open(config_file, 'r') as stream:
+        try:
+            return yaml.safe_load(stream)
+        except yaml.YAMLError:
+            myLogger.exception('Failed to parse config')
+
+
+def main():
+    start = time.time()
+
+    logging.config.fileConfig('../logging_config.conf')
+    myLogger = logging.getLogger('Admin_Client')
+    myLogger.info('Starting up')
+
+    var_config = load_config('../var_config.yml', myLogger)
+    const_config = load_config('../const_config.yml', myLogger)
+    river_map, map_shape = setup_map('../../resources/maps/river_map.png', myLogger)
+    fertility_map, map_shape = setup_map('../../resources/maps/fertility_map.png', myLogger)
 
     num_generations = const_config['num_generations']
     environment = Environment(river_map, fertility_map, map_shape, const_config)
@@ -214,4 +243,19 @@ if __name__ == "__main__":
     simulation = Simulation(households, environment, num_generations)
     presenter = Presenter(simulation)
 
+    pr = cProfile.Profile()
+    pr.enable()
+
     presenter.start_application()
+
+    pr.disable()
+    s = io.StringIO()
+    ps = pstats.Stats(pr, stream=s).sort_stats('tottime')
+    ps.print_stats()
+
+    with open('../../logs/profiling/profile.txt', 'w+') as f:
+        f.write(s.getvalue())
+
+
+if __name__ == "__main__":
+    main()

@@ -3,5 +3,7 @@
 *.jpg
 *.mp4
 *.avi
+*.log
 
 resources/frames/*
+logs/*
