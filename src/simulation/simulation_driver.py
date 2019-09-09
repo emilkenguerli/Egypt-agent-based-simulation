@@ -3,7 +3,6 @@
 Prior to the start of the simulation, the relevant start parameters are read in
 and objects initialised.
 """
-import logging
 import math
 import uuid
 import time
@@ -18,7 +17,6 @@ from simulation.environment import Environment
 from gui.presenter import Presenter
 from simulation.household import Household
 from model.agent_model import AgentModel
-from logging.config import fileConfig
 
 
 class Simulation:
@@ -208,7 +206,7 @@ def setup_households(env, var_config, const_config):
         households.append(household)
     return households
 
-def load_config(config_file, myLogger):
+def load_config(config_file):
     """Loads and returns the global configuration dictionary.
 
     Args:
@@ -226,16 +224,11 @@ def load_config(config_file, myLogger):
 
 
 def main():
-    start = time.time()
 
-    logging.config.fileConfig('../logging_config.conf')
-    myLogger = logging.getLogger('Admin_Client')
-    myLogger.info('Starting up')
-
-    var_config = load_config('../var_config.yml', myLogger)
-    const_config = load_config('../const_config.yml', myLogger)
-    river_map, map_shape = setup_map('../../resources/maps/river_map.png', myLogger)
-    fertility_map, map_shape = setup_map('../../resources/maps/fertility_map.png', myLogger)
+    var_config = load_config('../var_config.yml')
+    const_config = load_config('../const_config.yml')
+    river_map, map_shape = setup_map('../../resources/maps/river_map.png')
+    fertility_map, map_shape = setup_map('../../resources/maps/fertility_map.png')
 
     num_generations = const_config['num_generations']
     environment = Environment(river_map, fertility_map, map_shape, const_config)
