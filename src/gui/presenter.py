@@ -2,6 +2,7 @@ from tkinter import ttk
 import tkinter as tk
 
 import pandas as pd
+
 from gui.frame_view import FrameView
 from gui.user_view import UserView
 
