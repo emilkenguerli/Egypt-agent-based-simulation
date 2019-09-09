@@ -8,7 +8,6 @@ CONFIGURE PROJECT
 8. cd path/to/egypt-simulation
 9. pip install -r requirements.txt
 10. deactivate
-11. In logging_config.conf, line 34, you should change the path to your matching directory of logs\logs\
 
 RUNNING THE PROGRAM
 1. cd path/to/venv/Scripts
