@@ -68,10 +68,14 @@ class AbstractModel(ABC):
             A tuple of random x and y positions within the boundary defined by
             the household's knowledge_radius.
         """
+        nrow, ncol = environment.shape
         x_pos, y_pos = current_position
         x_field = x_pos + int(random.uniform(0, knowledge_radius))
         y_field = y_pos + int(random.uniform(0, knowledge_radius))
-        return (x_field, y_field)
+        if x_field < 0 or x_field > ncol-1 or y_field < 0 or y_field > nrow-1:
+            return (x_pos, y_pos)
+        else:
+            return (x_field, y_field)
 
     @abstractmethod
     def relocate(self, knowledge_radius, current_position, environment):
